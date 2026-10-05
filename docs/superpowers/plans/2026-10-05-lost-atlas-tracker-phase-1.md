@@ -8794,3 +8794,5 @@ The code blocks above are the plan as executed. The final review led to these ch
 
 - 2026-10-06: `startCompany(game, id, presidentId, price, bid)` deducts the winning bid from the president's cash (spec C7 and D4 item 10 were changed to match). The dialog needs a valid bid even when a price is tapped, and shows what the president pays. In the Task 18 hand check, Haoran's total after starting Express with a bid of 160 is now 115 + 2 × 100 = 315.
 - 2026-10-06: in the setup dialog, a cash field counts as edited only when its value changes, and the Long option reads "A long game includes:".
+- 2026-10-06: on a wide screen the track runs left to right from the lowest price to the highest, and the hint reads "right to left". On a phone the highest price stays on top.
+- 2026-10-06: in the start company dialog the price always follows the bid. Tapping a price sets the bid to twice that price.

@@ -346,7 +346,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 ## C4. Track view
 
 - Horizontal grid of track positions, colored by zone (A4). Cropped to the occupied positions plus one position each side. A "show full track" toggle shows all 27.
-- Turn order: highest price on the left (top on phone).
+- Track direction (changed 2026-10-06): lowest price on the left, highest on the right, so turn order reads right to left. On a phone the highest price is on top.
 - Each position shows its queue as a vertical stack, front on top. Each token is a company chip (abbreviation, company color) with its president's code.
 - Non-edit mode: select a token to show a bottom dock with up and down buttons that move it one increment (`moveToken`).
 - Edit mode: drag tokens to any position and any queue slot (`useSortable`). Also provide a per-token menu: "Move to price...", "Move to front", "Move to back", for touch and keyboard users.
@@ -383,7 +383,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 ## C9. Design handoff notes
 
 See `README.md` and `boards/` for the delivered design. Decisions made:
-- Turn order: highest price on the left (top on phone).
+- Track direction (changed 2026-10-06): lowest price on the left, highest on the right, so turn order reads right to left. On a phone the highest price is on top.
 - Edit mode: amber banner, 4px frame, filled pencil.
 - Crown above the letter so all share circles are the same size.
 - Constraints: PrimeVue components and Aura tokens, touch targets at least 44 px, readable at arm's length on a shared table, all information carried by more than color alone.

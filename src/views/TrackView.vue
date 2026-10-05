@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import ToggleSwitch from 'primevue/toggleswitch'
@@ -26,7 +27,14 @@ const epoch = ref(0)
 
 const order = computed(() => turnOrder(props.game))
 
-/** Track indices to show, highest price first. */
+// Same breakpoint as the CSS below. Wide: a row of columns. Narrow: a column of rows.
+const wide = useMediaQuery('(min-width: 720px)')
+
+/**
+ * Track indices to show. On a wide screen the track runs left to right from the lowest
+ * price to the highest, so turn order reads right to left. On a phone the highest price
+ * is on top, so turn order reads top to bottom.
+ */
 const indices = computed(() => {
   let low = 5
   let high = 10
@@ -40,7 +48,7 @@ const indices = computed(() => {
   }
   const out: number[] = []
   for (let i = high; i >= low; i--) out.push(i)
-  return out
+  return wide.value ? out.reverse() : out
 })
 
 const codeOf = (id: CompanyId) => {
@@ -111,9 +119,9 @@ function onDrop(payload: { id: CompanyId; index: number; slot: number }) {
   <section class="track-view">
     <div class="bar">
       <span class="hint">
-        <i class="pi pi-arrow-right wide" aria-hidden="true" />
+        <i class="pi pi-arrow-left wide" aria-hidden="true" />
         <i class="pi pi-arrow-down narrow" aria-hidden="true" />
-        <span class="wide">Turn order: highest price acts first, left to right</span>
+        <span class="wide">Turn order: highest price acts first, right to left</span>
         <span class="narrow">Top acts first</span>
       </span>
       <span class="grow" />

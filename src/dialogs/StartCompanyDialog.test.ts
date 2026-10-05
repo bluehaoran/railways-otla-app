@@ -92,26 +92,28 @@ describe('StartCompanyDialog', () => {
     expect(disabled(w)).toBe(true)
   })
 
-  it('lets the user tap a price, and disables prices above the phase maximum', async () => {
+  it('sets the bid to twice a tapped price, and disables prices above the phase maximum', async () => {
     const w = open(testGame())
     await pick(w, 'express', 'p1')
     expect(w.get('[data-testid="pick-100"]').attributes('disabled')).toBeDefined()
     await w.get('[data-testid="bid"]').setValue(160)
     await w.get('[data-testid="pick-70"]').trigger('click')
+    expect((w.get('[data-testid="bid"]').element as HTMLInputElement).value).toBe('140')
     expect(w.get('[data-testid="start-price"]').text()).toBe('70')
-    expect(disabled(w)).toBe(false)
+    expect(w.text()).toContain('140 ÷ 2 = 70.')
     const game = await start(w)
     expect(game.track[7]).toEqual(['express'])
-    expect(game.players[0].cash).toBe(-160)
+    expect(game.players[0].cash).toBe(-140)
   })
 
-  it('still needs a valid bid when a price was tapped, because the bid is what is paid', async () => {
+  it('replaces an invalid bid when a price is tapped', async () => {
     const w = open(testGame())
     await pick(w, 'express', 'p1')
     await w.get('[data-testid="bid"]').setValue(122)
-    await w.get('[data-testid="pick-70"]').trigger('click')
     expect(disabled(w)).toBe(true)
-    expect(w.text()).toContain('A bid is at least 120, in steps of 5')
+    await w.get('[data-testid="pick-80"]').trigger('click')
+    expect((w.get('[data-testid="bid"]').element as HTMLInputElement).value).toBe('160')
+    expect(disabled(w)).toBe(false)
   })
 
   it('shows what the president pays and has left', async () => {
@@ -124,7 +126,7 @@ describe('StartCompanyDialog', () => {
     expect(w.get('[data-testid="payment"]').classes()).toContain('warn')
   })
 
-  it('goes back to the bid price when the bid changes', async () => {
+  it('follows the bid again after a price was tapped', async () => {
     const w = open(testGame())
     await pick(w, 'express', 'p1')
     await w.get('[data-testid="pick-70"]').trigger('click')

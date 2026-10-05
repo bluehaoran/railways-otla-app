@@ -28,7 +28,7 @@ Design source for the web app. Read this folder before building any screen.
 
 ## Decisions
 - Tokens: zinc neutrals, emerald-700 `#047857` primary, amber `#b45309` for edit mode only. IBM Plex Sans, IBM Plex Mono for numbers. Touch targets 44px or larger.
-- Turn order: highest price on the left (top on phone).
+- Track direction (changed 2026-10-06): lowest price on the left, highest on the right, so turn order reads right to left. On a phone the highest price is on top.
 - Share circle: 28px, company colour, holder code. President: same circle, crown above the letter (counts as 2 shares). Treasury: dashed ring. Market: solid ring.
 - Text ink per company is chosen for 4.5:1 contrast. Consortium uses `#000000` (white 4.4:1 and `#18181b` 4.1:1 both fail).
 - Selected token on Track uses a bottom dock (up, down) instead of per-token buttons.

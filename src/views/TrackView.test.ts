@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
 import TrackView from './TrackView.vue'
 import TrackQueue from '../components/TrackQueue.vue'
@@ -33,8 +33,8 @@ const button = (w: VueWrapper, text: string) => {
 
 beforeEach(() => confirmRequire.mockReset())
 
-describe('TrackView', () => {
-  it('shows the occupied positions plus one each side, highest first', () => {
+describe('TrackView on a phone', () => {
+  it('shows the occupied positions plus one each side, highest on top', () => {
     expect(prices(view(sample()))).toEqual([100, 90, 80, 70, 60, 50])
   })
 
@@ -146,5 +146,27 @@ describe('TrackView', () => {
     const next = { ...sample(), track: sample().track.map((q) => q.filter((id) => id !== 'resourceful')) }
     await w.setProps({ game: next })
     expect(w.find('[data-testid="dock"]').exists()).toBe(false)
+  })
+})
+
+describe('TrackView on a wide screen', () => {
+  const original = window.matchMedia
+  beforeEach(() => {
+    window.matchMedia = ((query: string) => ({ ...original(query), matches: true })) as typeof window.matchMedia
+  })
+  afterEach(() => {
+    window.matchMedia = original
+  })
+
+  it('runs left to right from the lowest price to the highest', () => {
+    expect(prices(view(sample()))).toEqual([50, 60, 70, 80, 90, 100])
+  })
+
+  it('says that turn order runs right to left', () => {
+    expect(view(sample()).text()).toContain('Turn order: highest price acts first, right to left')
+  })
+
+  it('keeps the front of a queue first', () => {
+    expect(tokens(view(sample()))).toEqual(['resourceful', 'northernPort', 'tunneling'])
   })
 })

@@ -19,8 +19,6 @@ const companyId = ref<CompanyId | null>(null)
 const presidentId = ref<PlayerId | null>(null)
 /** The text field's value: a number, or '' while the field is empty. */
 const bid = ref<number | string>(MIN_BID)
-/** A price tapped on the track. It overrides the price from the bid. */
-const tapped = ref<number | null>(null)
 
 watch(
   visible,
@@ -29,14 +27,9 @@ watch(
     companyId.value = null
     presidentId.value = null
     bid.value = MIN_BID
-    tapped.value = null
   },
   { immediate: true },
 )
-
-watch(bid, () => {
-  tapped.value = null
-})
 
 const phase = computed(() => props.game.settings.phase)
 const minors = computed(() => MINOR_IDS.filter((id) => props.game.companies[id].status === 'unstarted'))
@@ -50,11 +43,11 @@ const bidPrice = computed(() => {
     return null
   }
 })
-const price = computed(() => tapped.value ?? bidPrice.value)
+/** The starting price always follows the bid. Tapping a price sets the bid to twice that price. */
+const price = bidPrice
 
 const working = computed(() => {
   if (bidPrice.value === null) return 'A bid is at least 120, in steps of 5.'
-  if (tapped.value !== null) return 'Price chosen on the track.'
   const half = Number(bid.value) / 2
   const snapped = snapDown(half)
   let text = `${bid.value} ÷ 2 = ${half}`
@@ -64,10 +57,7 @@ const working = computed(() => {
 })
 
 const president = computed(() => props.game.players.find((p) => p.id === presidentId.value))
-// The bid is what the president pays, so it must be valid even when a price was tapped.
-const canStart = computed(
-  () => companyId.value !== null && presidentId.value !== null && price.value !== null && bidPrice.value !== null,
-)
+const canStart = computed(() => companyId.value !== null && presidentId.value !== null && price.value !== null)
 const payment = computed(() => {
   if (!president.value || bidPrice.value === null) return null
   const left = president.value.cash - Number(bid.value)
@@ -163,12 +153,12 @@ function start() {
             :disabled="!allowed.includes(p)"
             :aria-pressed="price === p"
             :data-testid="`pick-${p}`"
-            @click="tapped = p"
+            @click="bid = p * 2"
           >
             {{ p }}
           </button>
         </div>
-        <span class="small muted">Or tap a price on the track.</span>
+        <span class="small muted">Or tap a price on the track. The bid becomes twice that price.</span>
       </div>
 
       <p class="note">
