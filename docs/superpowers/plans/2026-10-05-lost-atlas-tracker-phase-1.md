@@ -8789,3 +8789,8 @@ The code blocks above are the plan as executed. The final review led to these ch
 - `src/state/saves.ts`: `checkGame` requires share counts to be whole numbers from 0 to 99, held by known players, and no token on position 0.
 - `src/domain/edit.ts`: share counts are capped at `MAX_COUNT = 99`.
 - `src/state/game.ts`: `externalChange(key)` reloads the open game when another tab saved it. `useGame()` listens for the browser's `storage` event. The storage warnings now say to delete old saved games.
+
+## Changes after delivery
+
+- 2026-10-06: `startCompany(game, id, presidentId, price, bid)` deducts the winning bid from the president's cash (spec C7 and D4 item 10 were changed to match). The dialog needs a valid bid even when a price is tapped, and shows what the president pays. In the Task 18 hand check, Haoran's total after starting Express with a bid of 160 is now 115 + 2 × 100 = 315.
+- 2026-10-06: in the setup dialog, a cash field counts as edited only when its value changes, and the Long option reads "A long game includes:".

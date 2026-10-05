@@ -76,7 +76,7 @@ describe('settings', () => {
   })
 
   it('locks the Short Game flag once a company has started', () => {
-    const g = startCompany(testGame(), 'express', J, 80)
+    const g = startCompany(testGame(), 'express', J, 80, 120)
     expect(canChangeShortGame(testGame())).toBe(true)
     expect(canChangeShortGame(g)).toBe(false)
     expect(() => setShortGame(g, true)).toThrow()

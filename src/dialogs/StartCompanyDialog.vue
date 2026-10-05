@@ -53,8 +53,8 @@ const bidPrice = computed(() => {
 const price = computed(() => tapped.value ?? bidPrice.value)
 
 const working = computed(() => {
-  if (tapped.value !== null) return 'Price chosen on the track.'
   if (bidPrice.value === null) return 'A bid is at least 120, in steps of 5.'
+  if (tapped.value !== null) return 'Price chosen on the track.'
   const half = Number(bid.value) / 2
   const snapped = snapDown(half)
   let text = `${bid.value} ÷ 2 = ${half}`
@@ -64,7 +64,15 @@ const working = computed(() => {
 })
 
 const president = computed(() => props.game.players.find((p) => p.id === presidentId.value))
-const canStart = computed(() => companyId.value !== null && presidentId.value !== null && price.value !== null)
+// The bid is what the president pays, so it must be valid even when a price was tapped.
+const canStart = computed(
+  () => companyId.value !== null && presidentId.value !== null && price.value !== null && bidPrice.value !== null,
+)
+const payment = computed(() => {
+  if (!president.value || bidPrice.value === null) return null
+  const left = president.value.cash - Number(bid.value)
+  return { text: `${president.value.name} pays ${bid.value} from cash: ${president.value.cash} becomes ${left}.`, short: left < 0 }
+})
 
 function changeBid(delta: number) {
   const current = Number(bid.value)
@@ -72,8 +80,8 @@ function changeBid(delta: number) {
 }
 
 function start() {
-  if (companyId.value === null || presidentId.value === null || price.value === null) return
-  emit('start', startCompany(props.game, companyId.value, presidentId.value, price.value))
+  if (companyId.value === null || presidentId.value === null || price.value === null || !canStart.value) return
+  emit('start', startCompany(props.game, companyId.value, presidentId.value, price.value, Number(bid.value)))
   visible.value = false
 }
 </script>
@@ -141,7 +149,7 @@ function start() {
         <div class="result-head">
           <span class="field-label">Starting price</span>
           <span class="mono big" data-testid="start-price">{{ price ?? '–' }}</span>
-          <span class="small" :class="bidPrice === null && tapped === null ? 'error-text' : 'muted'">
+          <span class="small" :class="bidPrice === null ? 'error-text' : 'muted'">
             {{ working }} {{ PHASE_LABEL[phase] }} phase allows 60–{{ PHASE_MAX[phase] }}.
           </span>
         </div>
@@ -167,8 +175,12 @@ function start() {
         <i class="pi pi-info-circle" aria-hidden="true" />
         <span>
           {{ president ? president.name : 'The president' }} receives the president card, worth 2 shares. The other 3
-          shares go to the company treasury. Cash is not changed in Phase 1.
+          shares go to the company treasury.
         </span>
+      </p>
+      <p v-if="payment" class="note" :class="{ warn: payment.short }" data-testid="payment">
+        <i :class="payment.short ? 'pi pi-exclamation-triangle' : 'pi pi-wallet'" aria-hidden="true" />
+        <span>{{ payment.text }}{{ payment.short ? ' That is more cash than they have.' : '' }}</span>
       </p>
     </div>
 

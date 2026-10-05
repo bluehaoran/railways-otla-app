@@ -364,7 +364,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 
 - Choose an unstarted minor. Choose the president (player). Enter the winning bid (multiples of 5, minimum 120), or choose the starting price directly on the track.
 - Shows the resulting price using `startPrice(bid, phase)`.
-- Phase 1 does not change cash (cash is manual in Phase 1). Phase 2 deducts the bid from the president's cash and adds it to the company treasury.
+- The winning bid is deducted from the president's cash, in Phase 1 too (decided 2026-10-06). Phase 2 also adds it to the company treasury, which Phase 1 does not track.
 - The dialog gives the president card to the chosen player and puts the 3 regular cards in the company treasury.
 
 ## C8. Merge wizard
@@ -450,7 +450,7 @@ Items found in the rulebook that Haoran did not discuss in the interview, with t
 7. Merge conversion rule, the tie-break details and the `needsChoice` fallback in A4 are this spec's reading of the rulebook where the text is silent.
 8. The merged major's name: the app uses the first identity from `companies.json` for System and International (System, International). Confirm whether the second identity (Syndicate, Inc.) should be selectable.
 9. The players list order is clockwise seating order, used for the presidency tie rule.
-10. Phase 1 start-company dialog does not change cash. Cash is manual in Phase 1.
+10. Resolved 2026-10-06: the start-company dialog deducts the winning bid from the president's cash in Phase 1. Other cash changes stay manual in Phase 1.
 11. At the top of the track (500), a token that moves up stays at 500 and goes to the back of the queue.
 12. The undo history is saved with the game (capped at 200 steps).
 13. Refinement of the approved design: price and queue position are stored once, as the token's place in `track`, instead of as separate company fields.

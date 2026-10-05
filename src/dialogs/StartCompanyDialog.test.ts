@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount, type VueWrapper } from '@vue/test-utils'
 import StartCompanyDialog from './StartCompanyDialog.vue'
-import { setPhase, setShortGame } from '../domain/edit'
+import { setCash, setPhase, setShortGame } from '../domain/edit'
 import { put, testGame } from '../domain/fixtures'
 import type { Game } from '../domain/types'
 
@@ -42,13 +42,13 @@ describe('StartCompanyDialog', () => {
     expect(disabled(w)).toBe(false)
   })
 
-  it('starts at half the default bid of 120 and leaves cash alone', async () => {
-    const w = open(testGame())
+  it('starts at half the default bid of 120 and takes the bid from the president’s cash', async () => {
+    const w = open(setCash(setCash(testGame(), 'p1', 275), 'p2', 275))
     await pick(w, 'express', 'p2')
     const game = await start(w)
     expect(game.track[6]).toEqual(['express'])
     expect(game.companies.express).toMatchObject({ status: 'active', president: 'p2', treasuryShares: 3 })
-    expect(game.players.map((p) => p.cash)).toEqual([0, 0])
+    expect(game.players.map((p) => p.cash)).toEqual([275, 155])
     expect(w.emitted('update:visible')).toEqual([[false]])
   })
 
@@ -96,11 +96,32 @@ describe('StartCompanyDialog', () => {
     const w = open(testGame())
     await pick(w, 'express', 'p1')
     expect(w.get('[data-testid="pick-100"]').attributes('disabled')).toBeDefined()
-    await w.get('[data-testid="bid"]').setValue(122)
+    await w.get('[data-testid="bid"]').setValue(160)
     await w.get('[data-testid="pick-70"]').trigger('click')
     expect(w.get('[data-testid="start-price"]').text()).toBe('70')
     expect(disabled(w)).toBe(false)
-    expect((await start(w)).track[7]).toEqual(['express'])
+    const game = await start(w)
+    expect(game.track[7]).toEqual(['express'])
+    expect(game.players[0].cash).toBe(-160)
+  })
+
+  it('still needs a valid bid when a price was tapped, because the bid is what is paid', async () => {
+    const w = open(testGame())
+    await pick(w, 'express', 'p1')
+    await w.get('[data-testid="bid"]').setValue(122)
+    await w.get('[data-testid="pick-70"]').trigger('click')
+    expect(disabled(w)).toBe(true)
+    expect(w.text()).toContain('A bid is at least 120, in steps of 5')
+  })
+
+  it('shows what the president pays and has left', async () => {
+    const w = open(setCash(testGame(), 'p1', 275))
+    await pick(w, 'express', 'p1')
+    await w.get('[data-testid="bid"]').setValue(160)
+    expect(w.get('[data-testid="payment"]').text()).toContain('J pays 160 from cash: 275 becomes 115.')
+    await w.get('[data-testid="bid"]').setValue(300)
+    expect(w.get('[data-testid="payment"]').text()).toContain('275 becomes -25')
+    expect(w.get('[data-testid="payment"]').classes()).toContain('warn')
   })
 
   it('goes back to the bid price when the bid changes', async () => {
