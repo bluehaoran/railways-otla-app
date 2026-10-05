@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Track view</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1024px; height: 768px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: #f4f4f5; color: #18181b; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #fff; border-bottom: 1px solid #e4e4e7">
+<div style="width: 124px; flex: none">
+<div style="font-weight: 700; font-size: 16px; line-height: 20px; white-space: nowrap">Friday game</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b; white-space: nowrap">Green · Long game</div>
+</div>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px">
+<button type="button" aria-pressed="true" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 14px; font-weight: 600">Track</button>
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Ownership</button>
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Scoreboard</button>
+</div>
+<div style="flex: 1"></div>
+<button type="button" style="height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 8px; background: #047857; color: #fff; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Start company</button>
+<button type="button" style="height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>Merge</button>
+<button type="button" aria-label="Edit mode" aria-pressed="false" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+<button type="button" aria-label="Undo" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+<button type="button" aria-label="Redo" aria-disabled="true" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e4e4e7; border-radius: 8px; background: #fafafa; color: #a1a1aa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+<button type="button" aria-label="Menu" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 12px 16px 0">
+<div style="display: flex; align-items: center; gap: 12px; min-height: 44px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>Turn order: highest price acts first, left to right</div>
+<div style="flex: 1"></div>
+<span style="font-size: 12px; color: #52525b">Showing 11 of 27 positions</span>
+<button type="button" role="switch" aria-checked="false" style="height: 44px; padding: 0 14px 0 10px; display: inline-flex; align-items: center; gap: 10px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; font-size: 14px; font-weight: 500; color: #18181b"><span style="width: 36px; height: 20px; border-radius: 10px; background: #a1a1aa; position: relative; display: inline-block"><span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 8px; background: #fff"></span></span>Show full track</button>
+</div>
+
+<div style="flex: 1; min-height: 0; margin-top: 8px; display: flex; flex-direction: column; border: 1px solid #d4d4d8; border-radius: 12px; overflow: hidden; background: #fff">
+<div style="display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); border-bottom: 1px solid #d4d4d8">
+<sc-for list="{{bands}}" as="b" hint-placeholder-count="5">
+<div style="grid-column: span {{b.span}}; height: 28px; display: flex; align-items: center; justify-content: center; background: {{b.bg}}; font-size: 12px; font-weight: 600; color: #3f3f46; border-right: 1px solid #fff; white-space: nowrap">{{b.label}}</div>
+</sc-for>
+</div>
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(11, minmax(0, 1fr))">
+<sc-for list="{{cols}}" as="col" hint-placeholder-count="11">
+<div style="display: flex; flex-direction: column; min-width: 0; border-right: 1px solid #e4e4e7">
+<div style="height: 48px; flex: none; display: flex; align-items: center; justify-content: center; background: {{col.bg}}; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 20px; color: #18181b; border-bottom: 1px solid #d4d4d8">{{col.price}}</div>
+<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px 4px">
+<sc-for list="{{col.tokens}}" as="t" hint-placeholder-count="1">
+<button type="button" aria-label="{{t.label}}" style="position: relative; width: 76px; height: 52px; box-sizing: border-box; padding: 0; border: 1.5px solid rgba(24,24,27,.45); border-radius: 8px; background: {{t.color}}; color: {{t.ink}}; display: flex; align-items: center; justify-content: center; gap: 4px; font-weight: 700; box-shadow: {{t.ring}}">
+<sc-if value="{{t.showRank}}" hint-placeholder-val="{{false}}"><span style="position: absolute; top: -9px; left: -9px; width: 20px; height: 20px; border-radius: 10px; background: #18181b; color: #fff; font-size: 12px; line-height: 20px; text-align: center; border: 1.5px solid #fff">{{t.rank}}</span></sc-if>
+<span style="font-size: 18px">{{t.abbr}}</span>
+<span style="flex: none; width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: {{t.ink}}; color: {{t.color}}; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>{{t.pres}}</span>
+</button>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="flex: none; height: 88px; box-sizing: border-box; margin-top: 12px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #fff; border-top: 1px solid #e4e4e7">
+<div style="width: 60px; height: 44px; box-sizing: border-box; border: 1.5px solid rgba(24,24,27,.45); border-radius: 8px; background: #9f3841; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px">XP</div>
+<div>
+<div style="font-weight: 600; font-size: 16px; line-height: 22px">Express at 110</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b">President H · acts 2nd of 6 · tap another token to select it</div>
+</div>
+<div style="flex: 1"></div>
+<button type="button" style="height: 56px; min-width: 150px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #d4d4d8; border-radius: 10px; background: #fff; color: #18181b; font-size: 16px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m18 15-6-6-6 6"/></svg>Up to <span style="font-family: 'IBM Plex Mono', monospace">120</span></button>
+<button type="button" style="height: 56px; min-width: 150px; padding: 0 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #d4d4d8; border-radius: 10px; background: #fff; color: #18181b; font-size: 16px; font-weight: 600"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>Down to <span style="font-family: 'IBM Plex Mono', monospace">100</span></button>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+renderVals() {
+const CO = {
+union: { n: 'Union', a: 'U', c: '#e87d3c', i: '#18181b' },
+express: { n: 'Express', a: 'XP', c: '#9f3841', i: '#ffffff' },
+northernPort: { n: 'Northern Port', a: 'NP', c: '#385174', i: '#ffffff' },
+tunneling: { n: 'Tunneling', a: 'TU', c: '#b6a998', i: '#18181b' },
+agricultural: { n: 'Agricultural', a: 'AG', c: '#446e4c', i: '#ffffff' },
+resourceful: { n: 'Resourceful', a: 'RE', c: '#f1e1b9', i: '#18181b' }
+};
+const Q = {
+150: [['union', 'A']],
+110: [['express', 'H']],
+90: [['northernPort', 'Jo'], ['tunneling', 'Ja']],
+70: [['agricultural', 'A']],
+60: [['resourceful', 'H']]
+};
+const prices = [165, 150, 135, 120, 110, 100, 90, 80, 70, 60, 50];
+const Z = (p) => (p >= 120 && p <= 135) ? ['#e9d5ff', 'Purple phase'] : (p >= 100 && p <= 110) ? ['#bbf7d0', 'Green phase'] : (p >= 60 && p <= 90) ? ['#fde68a', 'Yellow phase'] : ['#e4e4e7', ''];
+const bands = [];
+prices.forEach((p) => {
+const z = Z(p);
+const last = bands[bands.length - 1];
+if (last && last.bg === z[0]) last.span += 1;
+else bands.push({ bg: z[0], label: z[1], span: 1 });
+});
+const cols = prices.map((p) => {
+const q = Q[p] || [];
+return {
+price: p,
+bg: Z(p)[0],
+tokens: q.map((t, i) => ({
+abbr: CO[t[0]].a,
+color: CO[t[0]].c,
+ink: CO[t[1] ? t[0] : t[0]].i,
+pres: t[1],
+rank: i + 1,
+showRank: q.length > 1,
+label: CO[t[0]].n + ' at ' + p + ', president ' + t[1],
+ring: t[0] === 'express' ? '0 0 0 3px #fff, 0 0 0 6px #18181b' : 'none'
+}))
+};
+});
+return { bands, cols };
+}
+}
+</script>
+</body>
+</html>

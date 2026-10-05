@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Merge wizard, choose president</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 600px; height: 820px; box-sizing: border-box; padding: 20px; background: #a1a1aa; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; color: #18181b; overflow: hidden">
+<div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; background: #fff; border-radius: 16px; box-shadow: 0 12px 32px rgba(24,24,27,.35); overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px 0 24px; border-bottom: 1px solid #e4e4e7">
+<div style="flex: 1; font-size: 20px; font-weight: 700">Merge two minors into a major</div>
+<button type="button" aria-label="Close" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #3f3f46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+
+<div style="flex: none; display: flex; align-items: center; gap: 10px; padding: 16px 24px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; border-radius: 15px; background: #047857; color: #fff; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="color: #3f3f46">Minors</span></div>
+<div style="flex: 1; height: 2px; background: #047857"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; border-radius: 15px; background: #047857; color: #fff; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="color: #3f3f46">Major</span></div>
+<div style="flex: 1; height: 2px; background: #047857"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; border-radius: 15px; background: #18181b; color: #fff; font-size: 14px; font-weight: 700; line-height: 30px; text-align: center">3</span><span style="font-weight: 700">Preview</span></div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 12px; padding: 0 24px">
+
+<div style="display: flex; align-items: center; gap: 8px; font-weight: 600">
+<span style="width: 34px; height: 24px; border-radius: 6px; background: #f1e1b9; color: #18181b; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">RE</span>Resourceful
+<span style="color: #52525b">+</span>
+<span style="width: 34px; height: 24px; border-radius: 6px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">XP</span>Express
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+<span style="width: 34px; height: 24px; border-radius: 6px; background: #7ab152; color: #18181b; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">F</span>Federation
+</div>
+
+<div style="display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: 10px; background: #fffbeb; color: #92400e; font-size: 14px; line-height: 20px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 1px"><path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg><span>John and James tie at 3 shares. Neither is president of Resourceful or Express, so the rules cannot decide. Choose the new president.</span></div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #3f3f46">New president, required</span>
+<div style="display: flex; gap: 8px">
+<button type="button" role="radio" aria-checked="false" style="flex: 1; height: 60px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: 1px solid #a1a1aa; border-radius: 10px; background: #fff; color: #18181b; font-size: 15px; font-weight: 600; text-align: left"><span style="flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 2px solid #71717a"></span><span style="width: 32px; height: 32px; border-radius: 16px; background: #18181b; color: #fff; font-size: 13px; font-weight: 700; line-height: 32px; text-align: center">Jo</span><span style="flex: 1">John<span style="display: block; font-size: 12px; line-height: 16px; font-weight: 400; color: #52525b">3 shares</span></span></button>
+<button type="button" role="radio" aria-checked="false" style="flex: 1; height: 60px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: 1px solid #a1a1aa; border-radius: 10px; background: #fff; color: #18181b; font-size: 15px; font-weight: 600; text-align: left"><span style="flex: none; width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 2px solid #71717a"></span><span style="width: 32px; height: 32px; border-radius: 16px; background: #18181b; color: #fff; font-size: 13px; font-weight: 700; line-height: 32px; text-align: center">Ja</span><span style="flex: 1">James<span style="display: block; font-size: 12px; line-height: 16px; font-weight: 400; color: #52525b">3 shares</span></span></button>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid #d4d4d8; border-radius: 12px"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 28px; line-height: 32px">80</span><span style="font-size: 13px; line-height: 18px; color: #3f3f46">New price. The average of 60 and 110 is 85, snapped down to the track.</span></div>
+
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; overflow: hidden">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 104px 92px 104px; height: 36px; align-items: center; background: #fafafa; font-size: 12px; font-weight: 600; color: #52525b">
+<span style="padding: 0 12px">Shares held</span><span style="text-align: right; padding: 0 12px">Resourceful</span><span style="text-align: right; padding: 0 12px">Express</span><span style="text-align: right; padding: 0 12px">Federation</span>
+</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 104px 92px 104px; height: 36px; align-items: center; border-top: 1px solid #f4f4f5; color: {{r.ink}}">
+<span style="padding: 0 12px; display: flex; align-items: center; gap: 8px"><span style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; background: {{r.bg}}; border: {{r.bd}}; color: #fff; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">{{r.badge}}</span>{{r.who}}</span>
+<span style="padding: 0 12px; display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-family: 'IBM Plex Mono', monospace"><sc-if value="{{r.aPres}}" hint-placeholder-val="{{false}}"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #f1e1b9; color: #18181b; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>{{r.a}}</span></sc-if><sc-if value="{{r.aPlain}}" hint-placeholder-val="{{true}}"><span>{{r.a}}</span></sc-if></span>
+<span style="padding: 0 12px; display: flex; justify-content: flex-end; align-items: center; gap: 4px; font-family: 'IBM Plex Mono', monospace"><sc-if value="{{r.bPres}}" hint-placeholder-val="{{false}}"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>{{r.b}}</span></sc-if><sc-if value="{{r.bPlain}}" hint-placeholder-val="{{true}}"><span>{{r.b}}</span></sc-if></span>
+<span style="padding: 0 12px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600">{{r.m}}</span>
+</div>
+</sc-for>
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 104px 92px 104px; height: 36px; align-items: center; border-top: 2px solid #18181b; font-family: 'IBM Plex Mono', monospace; font-weight: 600">
+<span style="padding: 0 12px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-weight: 700">Total</span><span style="text-align: right; padding: 0 12px">5</span><span style="text-align: right; padding: 0 12px">5</span><span style="text-align: right; padding: 0 12px">10</span>
+</div>
+</div>
+
+</div>
+
+<div style="height: 76px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 24px; border-top: 1px solid #e4e4e7">
+<span style="flex: 1; font-size: 13px; color: #92400e; font-weight: 600">Choose a president to continue</span>
+<button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b; font-size: 15px; font-weight: 600">Back</button>
+<button type="button" aria-disabled="true" style="height: 48px; padding: 0 24px; border: 0; border-radius: 8px; background: #e4e4e7; color: #71717a; font-size: 15px; font-weight: 600">Confirm merge</button>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":820}}'>
+class Component extends DCLogic {
+renderVals() {
+const PL = [
+['H', 'Haoran', 2, 0, true, false, 2],
+['A', 'Ari', 0, 2, false, true, 2],
+['Jo', 'John', 3, 0, false, false, 3],
+['Ja', 'James', 0, 3, false, false, 3]
+];
+const rows = PL.map((p) => ({
+badge: p[0], who: p[1],
+a: p[2] === 0 ? '–' : String(p[2]),
+b: p[3] === 0 ? '–' : String(p[3]),
+aPres: p[4], bPres: p[5], aPlain: !p[4], bPlain: !p[5],
+m: String(p[6]),
+bg: '#18181b', bd: '1.5px solid #18181b',
+ink: '#18181b'
+}));
+rows.push({ badge: '', who: 'Treasury', a: '–', b: '–', aPres: false, bPres: false, aPlain: true, bPlain: true, m: '–', bg: 'transparent', bd: '2px dashed #52525b', ink: '#71717a' });
+rows.push({ badge: '', who: 'Market', a: '–', b: '–', aPres: false, bPres: false, aPlain: true, bPlain: true, m: '–', bg: 'transparent', bd: '2px solid #52525b', ink: '#71717a' });
+return { rows };
+}
+}
+</script>
+</body>
+</html>

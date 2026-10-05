@@ -1,0 +1,47 @@
+{
+  "v": 3,
+  "attachments": {},
+  "createdOnFiles": { "at": "2026-10-05T06:30:00Z", "v": 1 },
+  "title": "Lost Atlas Tracker",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1024, "h": 768, "title": "Track" },
+    "Ownership.dc.html": { "x": 1104, "y": 0, "w": 1024, "h": 768, "title": "Ownership" },
+    "Scoreboard.dc.html": { "x": 2208, "y": 0, "w": 1024, "h": 768, "title": "Scoreboard" },
+    "OwnershipEdit.dc.html": { "x": 0, "y": 1100, "w": 1024, "h": 768, "title": "Ownership, edit mode" },
+    "Dividend.dc.html": { "x": 1104, "y": 1100, "w": 1024, "h": 768, "title": "Dividend, Phase 2" },
+    "Components.dc.html": { "x": 2208, "y": 1100, "w": 1024, "h": 768, "title": "Notation and tokens" },
+    "TrackPhone.dc.html": { "x": 0, "y": 2160, "w": 390, "h": 844, "title": "Track, phone" },
+    "ScoreboardPhone.dc.html": { "x": 470, "y": 2160, "w": 390, "h": 844, "title": "Scoreboard, phone, 5 players" },
+    "Setup.dc.html": { "x": 940, "y": 2160, "w": 560, "h": 860, "title": "Setup dialog" },
+    "StartCompany.dc.html": { "x": 1580, "y": 2160, "w": 560, "h": 860, "title": "Start company dialog" },
+    "MergeSelect.dc.html": { "x": 0, "y": 3500, "w": 600, "h": 700, "title": "Merge, step 1" },
+    "MergeMajor.dc.html": { "x": 680, "y": 3500, "w": 600, "h": 700, "title": "Merge, step 2, choose major" },
+    "MergePreview.dc.html": { "x": 1360, "y": 3500, "w": 600, "h": 820, "title": "Merge, step 3, tie-break" },
+    "MergeChoice.dc.html": { "x": 2040, "y": 3500, "w": 600, "h": 820, "title": "Merge, step 3, choose president" }
+  },
+  "order": [
+    "Main.dc.html",
+    "Ownership.dc.html",
+    "Scoreboard.dc.html",
+    "OwnershipEdit.dc.html",
+    "Dividend.dc.html",
+    "Components.dc.html",
+    "TrackPhone.dc.html",
+    "ScoreboardPhone.dc.html",
+    "Setup.dc.html",
+    "StartCompany.dc.html",
+    "MergeSelect.dc.html",
+    "MergeMajor.dc.html",
+    "MergePreview.dc.html",
+    "MergeChoice.dc.html"
+  ],
+  "notes": {
+    "t1": { "kind": "title1", "maxW": 3232, "text": "Main screens, tablet landscape", "w": 240, "x": 0, "y": -260 },
+    "t2": { "kind": "title1", "maxW": 3232, "text": "Edit mode, Phase 2 and notation", "w": 240, "x": 0, "y": 860 },
+    "t3": { "kind": "title1", "maxW": 2140, "text": "Phone layouts and game setup", "w": 240, "x": 0, "y": 1920 },
+    "t4": { "kind": "title1", "maxW": 2640, "text": "Merge wizard", "w": 240, "x": 0, "y": 3260 }
+  },
+  "designSystems": []
+}

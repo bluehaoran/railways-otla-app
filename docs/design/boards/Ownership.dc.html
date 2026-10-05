@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ownership view</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1024px; height: 768px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: #f4f4f5; color: #18181b; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #fff; border-bottom: 1px solid #e4e4e7">
+<div style="width: 124px; flex: none">
+<div style="font-weight: 700; font-size: 16px; line-height: 20px; white-space: nowrap">Friday game</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b; white-space: nowrap">Green · Long game</div>
+</div>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px">
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Track</button>
+<button type="button" aria-pressed="true" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 14px; font-weight: 600">Ownership</button>
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Scoreboard</button>
+</div>
+<div style="flex: 1"></div>
+<button type="button" style="height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 8px; background: #047857; color: #fff; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Start company</button>
+<button type="button" style="height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>Merge</button>
+<button type="button" aria-label="Edit mode" aria-pressed="false" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+<button type="button" aria-label="Undo" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+<button type="button" aria-label="Redo" aria-disabled="true" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e4e4e7; border-radius: 8px; background: #fafafa; color: #a1a1aa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+<button type="button" aria-label="Menu" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 16px 16px 0; gap: 12px">
+
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; overflow: hidden">
+<div style="display: grid; grid-template-columns: 164px repeat(4, minmax(0, 1fr)) 120px 120px 104px; align-items: center; height: 64px; background: #fafafa">
+<div style="padding: 0 12px; font-size: 12px; font-weight: 600; color: #52525b">Company, in turn order</div>
+<sc-for list="{{players}}" as="p" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="width: 28px; height: 28px; border-radius: 14px; background: #18181b; color: #fff; font-size: 12px; font-weight: 700; line-height: 28px; text-align: center">{{p.code}}</span>
+<span style="font-size: 12px; line-height: 16px; color: #52525b">{{p.name}}</span>
+</div>
+</sc-for>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 2px dashed #52525b"></span>
+<span style="font-size: 12px; line-height: 16px; color: #52525b">Treasury</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<span style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; border: 2px solid #52525b"></span>
+<span style="font-size: 12px; line-height: 16px; color: #52525b">Market</span>
+</div>
+<div style="text-align: center; font-size: 12px; font-weight: 600; color: #52525b">Total check</div>
+</div>
+
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+<div style="display: grid; grid-template-columns: 164px repeat(4, minmax(0, 1fr)) 120px 120px 104px; min-height: 84px; border-top: 1px solid #e4e4e7; align-items: center">
+<div style="padding: 0 12px; min-width: 0">
+<div style="display: flex; align-items: center; gap: 8px; min-width: 0">
+<span style="flex: none; width: 34px; height: 24px; border-radius: 6px; background: {{r.color}}; color: {{r.ink}}; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">{{r.abbr}}</span>
+<span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b; margin-top: 4px"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; color: #18181b">{{r.price}}</span> · acts {{r.order}}</div>
+</div>
+<sc-for list="{{r.cells}}" as="cell" hint-placeholder-count="6">
+<div style="align-self: stretch; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 3px; padding: 6px 4px; min-width: 0; border-left: 1px solid #f4f4f5">
+<sc-if value="{{cell.empty}}" hint-placeholder-val="{{false}}"><span style="color: #71717a; font-size: 14px" aria-label="none">–</span></sc-if>
+<sc-for list="{{cell.items}}" as="s" hint-placeholder-count="2">
+<div style="width: {{s.w}}; height: 28px; box-sizing: border-box; border-radius: 14px; background: {{s.bg}}; color: {{s.ink}}; border: {{s.bd}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: 12px; line-height: 12px; font-weight: 700">
+<sc-if value="{{s.crown}}" hint-placeholder-val="{{false}}"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg></sc-if>{{s.label}}
+</div>
+</sc-for>
+</div>
+</sc-for>
+<div style="display: flex; align-items: center; justify-content: center; gap: 4px; color: #047857; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span style="font-family: 'IBM Plex Mono', monospace">{{r.check}}</span></div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; align-items: center; gap: 24px; padding: 0 4px; min-height: 44px; font-size: 12px; color: #3f3f46">
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); font-size: 12px; font-weight: 700; line-height: 25px; text-align: center">H</span>Share, letter is the holder</div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>H</span>President card, counts as 2 shares</div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; border: 2px dashed #52525b"></span>In company treasury</div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; border: 2px solid #52525b"></span>In the market</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+renderVals() {
+const P = [{ code: 'H', name: 'Haoran' }, { code: 'A', name: 'Ari' }, { code: 'Jo', name: 'John' }, { code: 'Ja', name: 'James' }];
+const CO = {
+union: { n: 'Union', a: 'U', c: '#e87d3c', i: '#18181b' },
+express: { n: 'Express', a: 'XP', c: '#9f3841', i: '#ffffff' },
+northernPort: { n: 'Northern Port', a: 'NP', c: '#385174', i: '#ffffff' },
+tunneling: { n: 'Tunneling', a: 'TU', c: '#b6a998', i: '#18181b' },
+agricultural: { n: 'Agricultural', a: 'AG', c: '#446e4c', i: '#ffffff' },
+resourceful: { n: 'Resourceful', a: 'RE', c: '#f1e1b9', i: '#18181b' }
+};
+const R = [
+{ k: 'union', price: 150, pres: 'A', h: { H: 2, A: 0, Jo: 1, Ja: 2 }, t: 1, m: 2, total: 10 },
+{ k: 'express', price: 110, pres: 'H', h: { H: 0, A: 1, Jo: 1, Ja: 0 }, t: 1, m: 0, total: 5 },
+{ k: 'northernPort', price: 90, pres: 'Jo', h: { H: 1, A: 0, Jo: 0, Ja: 1 }, t: 1, m: 0, total: 5 },
+{ k: 'tunneling', price: 90, pres: 'Ja', h: { H: 0, A: 1, Jo: 0, Ja: 0 }, t: 1, m: 1, total: 5 },
+{ k: 'agricultural', price: 70, pres: 'A', h: { H: 0, A: 0, Jo: 0, Ja: 1 }, t: 0, m: 2, total: 5 },
+{ k: 'resourceful', price: 60, pres: 'H', h: { H: 0, A: 1, Jo: 1, Ja: 0 }, t: 1, m: 0, total: 5 }
+];
+const ORD = ['1st', '2nd', '3rd', '4th', '5th', '6th'];
+const BD = '1.5px solid rgba(24,24,27,.45)';
+const rows = R.map((r, idx) => {
+const co = CO[r.k];
+const cells = P.map((p) => {
+const items = [];
+if (r.pres === p.code) items.push({ w: '28px', bg: co.c, ink: co.i, bd: BD, label: p.code, crown: true });
+for (let n = 0; n < r.h[p.code]; n++) items.push({ w: '28px', bg: co.c, ink: co.i, bd: BD, label: p.code, crown: false });
+return { items, empty: items.length === 0 };
+});
+const tr = [];
+for (let n = 0; n < r.t; n++) tr.push({ w: '28px', bg: 'transparent', ink: '#52525b', bd: '2px dashed #52525b', label: '', crown: false });
+const mk = [];
+for (let n = 0; n < r.m; n++) mk.push({ w: '28px', bg: 'transparent', ink: '#52525b', bd: '2px solid #52525b', label: '', crown: false });
+cells.push({ items: tr, empty: tr.length === 0 });
+cells.push({ items: mk, empty: mk.length === 0 });
+return { abbr: co.a, name: co.n, color: co.c, ink: co.i, price: r.price, order: ORD[idx], cells, check: r.total + '/' + r.total };
+});
+return { players: P, rows };
+}
+}
+</script>
+</body>
+</html>

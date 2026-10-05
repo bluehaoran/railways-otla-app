@@ -1,0 +1,31 @@
+{
+  "source": "Colors sampled from charter art in Railways of the Lost Atlas rulebook (p.3 components). Approximate, not official.",
+  "majors": {
+    "consortium": { "abbr": "C", "color": "#e2363c", "colorName": "red", "identities": [{ "name": "Consortium" }, { "name": null }] },
+    "union": { "abbr": "U", "color": "#e87d3c", "colorName": "orange", "identities": [{ "name": "Union" }, { "name": null }] },
+    "system": { "abbr": "S", "color": "#ecb545", "colorName": "yellow", "identities": [{ "name": "System" }, { "name": "Syndicate" }] },
+    "international": { "abbr": "I", "color": "#9cc1cd", "colorName": "light blue", "identities": [{ "name": "International" }, { "name": "Inc." }] },
+    "federation": { "abbr": "F", "color": "#7ab152", "colorName": "green", "identities": [{ "name": "Federation" }, { "name": null }] },
+    "experiment": { "abbr": "E", "color": "#985994", "colorName": "purple", "identities": [{ "name": "Experiment" }, { "name": "Enterprise" }] }
+  },
+  "minors": {
+    "spacious": { "name": "Spacious", "abbr": "SP", "color": "#9ed181", "colorName": "light green" },
+    "adaptive": { "name": "Adaptive", "abbr": "AD", "color": "#9c83b1", "colorName": "lavender" },
+    "bridging": { "name": "Bridging", "abbr": "BR", "color": "#7dc1a5", "colorName": "teal" },
+    "overnight": { "name": "Overnight", "abbr": "OV", "color": "#383232", "colorName": "charcoal" },
+    "tunneling": { "name": "Tunneling", "abbr": "TU", "color": "#b6a998", "colorName": "grey-taupe" },
+    "resourceful": { "name": "Resourceful", "abbr": "RE", "color": "#f1e1b9", "colorName": "cream" },
+    "easternMining": { "name": "Eastern Mining", "abbr": "EM", "color": "#b9825c", "colorName": "brown" },
+    "agricultural": { "name": "Agricultural", "abbr": "AG", "color": "#446e4c", "colorName": "dark green" },
+    "northernPort": { "name": "Northern Port", "abbr": "NP", "color": "#385174", "colorName": "navy" },
+    "expansive": { "name": "Expansive", "abbr": "EX", "color": "#e76684", "colorName": "pink" },
+    "express": { "name": "Express", "abbr": "XP", "color": "#9f3841", "colorName": "crimson" },
+    "suburban": { "name": "Suburban", "abbr": "SU", "color": "#eda794", "colorName": "salmon" }
+  },
+  "stockTrackZones": {
+    "yellowPhaseStart": { "values": "60-90", "color": "yellow" },
+    "greenPhaseStart": { "values": "100-110", "color": "green" },
+    "purplePhaseStart": { "values": "120-135", "color": "purple" },
+    "closed": { "values": "0", "color": "red X" }
+  }
+}

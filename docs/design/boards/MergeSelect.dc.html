@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Merge wizard, step 1</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 600px; height: 700px; box-sizing: border-box; padding: 20px; background: #a1a1aa; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; color: #18181b; overflow: hidden">
+<div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; background: #fff; border-radius: 16px; box-shadow: 0 12px 32px rgba(24,24,27,.35); overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px 0 24px; border-bottom: 1px solid #e4e4e7">
+<div style="flex: 1; font-size: 20px; font-weight: 700">Merge two minors into a major</div>
+<button type="button" aria-label="Close" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #3f3f46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+
+<div style="flex: none; display: flex; align-items: center; gap: 10px; padding: 16px 24px">
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; border-radius: 15px; background: #18181b; color: #fff; font-size: 14px; font-weight: 700; line-height: 30px; text-align: center">1</span><span style="font-weight: 700">Minors</span></div>
+<div style="flex: 1; height: 2px; background: #d4d4d8"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; box-sizing: border-box; border-radius: 15px; border: 2px solid #a1a1aa; color: #52525b; font-size: 14px; font-weight: 600; line-height: 26px; text-align: center">2</span><span style="color: #52525b">Major</span></div>
+<div style="flex: 1; height: 2px; background: #d4d4d8"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span style="width: 30px; height: 30px; box-sizing: border-box; border-radius: 15px; border: 2px solid #a1a1aa; color: #52525b; font-size: 14px; font-weight: 600; line-height: 26px; text-align: center">3</span><span style="color: #52525b">Preview</span></div>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 0 24px">
+<div style="font-size: 14px; color: #3f3f46">Choose two active minors. They are listed in turn order.</div>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
+<button type="button" aria-pressed="{{r.on}}" style="height: 56px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: {{r.bd}}; border-radius: 10px; background: {{r.bg}}; color: #18181b; font-size: 14px; text-align: left">
+<span style="flex: none; width: 28px; height: 28px; box-sizing: border-box; border-radius: {{r.rad}}; border: {{r.mbd}}; background: {{r.mbg}}; color: #fff; font-size: 13px; font-weight: 700; line-height: 24px; text-align: center">{{r.mark}}</span>
+<span style="flex: none; width: 34px; height: 24px; border-radius: 6px; background: {{r.color}}; color: {{r.ink}}; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">{{r.abbr}}</span>
+<span style="flex: 1; font-weight: 600">{{r.name}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 16px; width: 44px; text-align: right">{{r.price}}</span>
+<span style="flex: none; width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: {{r.color}}; color: {{r.ink}}; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>{{r.pres}}</span>
+</button>
+</sc-for>
+</div>
+
+<div style="height: 76px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 24px; border-top: 1px solid #e4e4e7">
+<span style="flex: 1; font-size: 13px; color: #3f3f46">Tunneling + Agricultural</span>
+<button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b; font-size: 15px; font-weight: 600">Cancel</button>
+<button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 8px; background: #047857; color: #fff; font-size: 15px; font-weight: 600">Next</button>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":600,"height":700}}'>
+class Component extends DCLogic {
+renderVals() {
+const R = [
+['XP', 'Express', '#9f3841', '#ffffff', 110, 'H', ''],
+['NP', 'Northern Port', '#385174', '#ffffff', 90, 'Jo', ''],
+['TU', 'Tunneling', '#b6a998', '#18181b', 90, 'Ja', 'A'],
+['AG', 'Agricultural', '#446e4c', '#ffffff', 70, 'A', 'B'],
+['RE', 'Resourceful', '#f1e1b9', '#18181b', 60, 'H', '']
+];
+const rows = R.map((r) => {
+const on = r[6] !== '';
+return {
+abbr: r[0], name: r[1], color: r[2], ink: r[3], price: r[4], pres: r[5],
+on,
+bd: on ? '2px solid #047857' : '1px solid #a1a1aa',
+bg: on ? '#ecfdf5' : '#ffffff',
+mark: r[6],
+rad: on ? '14px' : '6px',
+mbd: on ? '2px solid #18181b' : '2px solid #71717a',
+mbg: on ? '#18181b' : '#ffffff'
+};
+});
+return { rows };
+}
+}
+</script>
+</body>
+</html>

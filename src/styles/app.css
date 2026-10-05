@@ -1,0 +1,194 @@
+:root {
+  --ink: #18181b;
+  --ink-2: #3f3f46;
+  --muted: #52525b;
+  --faint: #71717a;
+  --line: #e4e4e7;
+  --line-2: #d4d4d8;
+  --line-3: #a1a1aa;
+  --bg: #f4f4f5;
+  --card: #ffffff;
+  --head: #fafafa;
+  --primary: #047857;
+  --lead: #ecfdf5;
+  --amber: #b45309;
+  --amber-ink: #92400e;
+  --amber-bg: #fffbeb;
+  --amber-chip: #fef3c7;
+  --zone-closed: #fecaca;
+  --zone-none: #e4e4e7;
+  --zone-yellow: #fde68a;
+  --zone-green: #bbf7d0;
+  --zone-purple: #e9d5ff;
+  --token-border: 1.5px solid rgba(24, 24, 27, 0.45);
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.card {
+  border: 1px solid var(--line-2);
+  border-radius: 12px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+/* Square icon button, 44px touch target. */
+.icon-btn {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.icon-btn:disabled {
+  border-color: var(--line);
+  background: var(--head);
+  color: var(--line-3);
+  cursor: default;
+}
+
+/* Selection card: a button that shows a chosen state with a border and a tick. */
+.pick {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border: 1px solid var(--line-3);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+.pick[aria-pressed='true'],
+.pick[aria-checked='true'] {
+  border: 2px solid var(--primary);
+  background: var(--lead);
+  font-weight: 600;
+  padding: 0 11px;
+}
+
+.pick:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.note.warn {
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+
+.zone-closed {
+  background: var(--zone-closed);
+}
+.zone-none {
+  background: var(--zone-none);
+}
+.zone-yellow {
+  background: var(--zone-yellow);
+}
+.zone-green {
+  background: var(--zone-green);
+}
+.zone-purple {
+  background: var(--zone-purple);
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dialog-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.dialog-footer .grow {
+  flex: 1;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.error-text {
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}

@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Notation and tokens</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 1024px; height: 768px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px; padding: 24px; background: #f4f4f5; color: #18181b; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; overflow: hidden">
+
+<div style="display: flex; align-items: baseline; gap: 12px">
+<div style="font-size: 24px; line-height: 32px; font-weight: 700">Notation and tokens</div>
+<div style="font-size: 14px; color: #52525b">Every holding carries a letter or a ring style, so color is never the only signal.</div>
+</div>
+
+<div style="display: grid; grid-template-columns: 456px minmax(0, 1fr); gap: 16px; flex: 1; min-height: 0">
+
+<div style="display: flex; flex-direction: column; gap: 16px; min-height: 0">
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; overflow: hidden">
+<div style="height: 40px; display: flex; align-items: center; padding: 0 16px; background: #fafafa; font-size: 12px; font-weight: 600; color: #52525b; border-bottom: 1px solid #e4e4e7">Share notation, large and actual size</div>
+
+<div style="height: 76px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #f4f4f5">
+<div style="width: 92px; display: flex; justify-content: center"><span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; background: #9f3841; color: #fff; border: 2px solid rgba(24,24,27,.45); font-size: 16px; font-weight: 700; line-height: 40px; text-align: center">H</span></div>
+<div style="width: 54px; display: flex; justify-content: center"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); font-size: 12px; font-weight: 700; line-height: 25px; text-align: center">H</span></div>
+<div><div style="font-weight: 600">Share</div><div style="font-size: 12px; line-height: 16px; color: #52525b">Company color fill, holder letter</div></div>
+</div>
+
+<div style="height: 76px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #f4f4f5">
+<div style="width: 92px; display: flex; justify-content: center"><span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; background: #9f3841; color: #fff; border: 2px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; font-size: 16px; line-height: 17px; font-weight: 700"><svg width="17" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>H</span></div>
+<div style="width: 54px; display: flex; justify-content: center"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; background: #9f3841; color: #fff; border: 1.5px solid rgba(24,24,27,.45); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; font-size: 12px; line-height: 12px; font-weight: 700"><svg width="11" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg>H</span></div>
+<div><div style="font-weight: 600">President card</div><div style="font-size: 12px; line-height: 16px; color: #52525b">Same size as a share, crown above the letter, counts as 2 shares</div></div>
+</div>
+
+<div style="height: 76px; display: flex; align-items: center; gap: 16px; padding: 0 16px; border-bottom: 1px solid #f4f4f5">
+<div style="width: 92px; display: flex; justify-content: center"><span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 3px dashed #52525b"></span></div>
+<div style="width: 54px; display: flex; justify-content: center"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; border: 2px dashed #52525b"></span></div>
+<div><div style="font-weight: 600">Treasury share</div><div style="font-size: 12px; line-height: 16px; color: #52525b">Dashed ring, no letter</div></div>
+</div>
+
+<div style="height: 76px; display: flex; align-items: center; gap: 16px; padding: 0 16px">
+<div style="width: 92px; display: flex; justify-content: center"><span style="width: 44px; height: 44px; box-sizing: border-box; border-radius: 22px; border: 3px solid #52525b"></span></div>
+<div style="width: 54px; display: flex; justify-content: center"><span style="width: 28px; height: 28px; box-sizing: border-box; border-radius: 14px; border: 2px solid #52525b"></span></div>
+<div><div style="font-weight: 600">Market share</div><div style="font-size: 12px; line-height: 16px; color: #52525b">Plain ring, no letter</div></div>
+</div>
+</div>
+
+<div style="display: flex; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid #d4d4d8; border-radius: 12px; background: #fff">
+<div style="width: 92px; height: 92px; flex: none; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: #f4f4f5; color: #18181b"><svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-1.6 10H4.6z"/><rect x="4.5" y="19.5" width="15" height="2.2" rx="1"/></svg></div>
+<div><div style="font-weight: 600">Crown artwork</div><div style="font-size: 12px; line-height: 16px; color: #52525b; margin-top: 2px">Filled, three points on a base bar, 24 unit grid. Inherits the text color of its token so it keeps the same contrast.</div></div>
+</div>
+</div>
+
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; overflow: hidden; min-height: 0">
+<div style="height: 40px; display: flex; align-items: center; padding: 0 16px; background: #fafafa; font-size: 12px; font-weight: 600; color: #52525b; border-bottom: 1px solid #e4e4e7">Company colors and text ink, contrast against fill</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="18">
+<div style="height: 68px; box-sizing: border-box; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-bottom: 1px solid #f4f4f5; border-right: 1px solid #f4f4f5">
+<span style="flex: none; width: 38px; height: 38px; box-sizing: border-box; border-radius: 19px; background: {{t.color}}; color: {{t.ink}}; border: 1.5px solid rgba(24,24,27,.45); font-size: 13px; font-weight: 700; line-height: 35px; text-align: center">{{t.abbr}}</span>
+<div style="min-width: 0"><div style="font-size: 13px; line-height: 18px; font-weight: 600; white-space: nowrap">{{t.name}}</div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; line-height: 16px; color: #52525b; white-space: nowrap">{{t.note}}</div></div>
+</div>
+</sc-for>
+</div>
+</div>
+
+</div>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 16px; flex: none">
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; font-weight: 600; color: #52525b">Track zones</div>
+<div style="display: flex; gap: 6px; flex-wrap: wrap">
+<sc-for list="{{zones}}" as="z" hint-placeholder-count="5">
+<span style="display: inline-flex; align-items: center; gap: 8px; height: 32px; box-sizing: border-box; padding: 0 12px; border-radius: 8px; border: 1px solid #a1a1aa; background: {{z.bg}}; font-size: 13px; font-weight: 500"><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600">{{z.range}}</span>{{z.label}}</span>
+</sc-for>
+</div>
+</div>
+<div style="position: relative; box-sizing: border-box; border: 4px solid #b45309; border-radius: 12px; background: #fff; overflow: hidden">
+<div style="height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 12px; background: #b45309; color: #fff; font-size: 13px; font-weight: 600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit mode signal: banner, frame, pencil toggle</div>
+<div style="padding: 6px 12px; font-size: 12px; line-height: 16px; color: #3f3f46">Amber is used for edit mode only. White text on it is 5.0:1.</div>
+</div>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+renderVals() {
+const T = [
+['C', 'Consortium', '#e2363c', '#000000', 'black 4.8:1'],
+['U', 'Union', '#e87d3c', '#18181b', 'ink 6.3:1'],
+['S', 'System', '#ecb545', '#18181b', 'ink 9.5:1'],
+['I', 'International', '#9cc1cd', '#18181b', 'ink 9.2:1'],
+['F', 'Federation', '#7ab152', '#18181b', 'ink 7.0:1'],
+['E', 'Experiment', '#985994', '#ffffff', 'white 5.0:1'],
+['SP', 'Spacious', '#9ed181', '#18181b', 'ink 10.0:1'],
+['AD', 'Adaptive', '#9c83b1', '#18181b', 'ink 5.3:1'],
+['BR', 'Bridging', '#7dc1a5', '#18181b', 'ink 8.5:1'],
+['OV', 'Overnight', '#383232', '#ffffff', 'white 12.6:1'],
+['TU', 'Tunneling', '#b6a998', '#18181b', 'ink 7.7:1'],
+['RE', 'Resourceful', '#f1e1b9', '#18181b', 'ink 13.7:1'],
+['EM', 'Eastern Mining', '#b9825c', '#18181b', 'ink 5.4:1'],
+['AG', 'Agricultural', '#446e4c', '#ffffff', 'white 5.9:1'],
+['NP', 'Northern Port', '#385174', '#ffffff', 'white 8.1:1'],
+['EX', 'Expansive', '#e76684', '#18181b', 'ink 5.6:1'],
+['XP', 'Express', '#9f3841', '#ffffff', 'white 6.7:1'],
+['SU', 'Suburban', '#eda794', '#18181b', 'ink 8.9:1']
+];
+const tiles = T.map((t) => ({ abbr: t[0], name: t[1], color: t[2], ink: t[3], note: t[4] }));
+const zones = [
+{ range: '0', label: 'Closed', bg: '#fecaca' },
+{ range: '10–50', label: 'No phase', bg: '#e4e4e7' },
+{ range: '60–90', label: 'Yellow phase', bg: '#fde68a' },
+{ range: '100–110', label: 'Green phase', bg: '#bbf7d0' },
+{ range: '120–135', label: 'Purple phase', bg: '#e9d5ff' }
+];
+return { tiles, zones };
+}
+}
+</script>
+</body>
+</html>

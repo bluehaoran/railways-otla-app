@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New game setup</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 560px; height: 860px; box-sizing: border-box; padding: 20px; background: #a1a1aa; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; color: #18181b; overflow: hidden">
+<div style="height: 100%; box-sizing: border-box; display: flex; flex-direction: column; background: #fff; border-radius: 16px; box-shadow: 0 12px 32px rgba(24,24,27,.35); overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px 0 24px; border-bottom: 1px solid #e4e4e7">
+<div style="flex: 1; font-size: 20px; font-weight: 700">New game</div>
+<button type="button" aria-label="Close" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #3f3f46"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 16px; padding: 16px 24px 0">
+
+<div style="display: flex; flex-direction: column; gap: 4px">
+<label style="font-size: 13px; font-weight: 600; color: #3f3f46">Game name</label>
+<div style="height: 48px; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px; border: 1px solid #a1a1aa; border-radius: 8px; font-size: 16px">Friday game</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #3f3f46">
+<span style="flex: 1">Players, in seating order</span>
+<span style="width: 72px">Code</span>
+<span style="width: 104px">Starting cash</span>
+<span style="width: 44px"></span>
+</div>
+<sc-for list="{{players}}" as="p" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 8px">
+<div style="flex: 1; min-width: 0; height: 48px; box-sizing: border-box; display: flex; align-items: center; padding: 0 12px; border: 1px solid #a1a1aa; border-radius: 8px; font-size: 16px">{{p.name}}</div>
+<div style="width: 72px; height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid #a1a1aa; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 16px">{{p.code}}</div>
+<div style="width: 104px; height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; border: 1px solid #a1a1aa; border-radius: 8px; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 16px">{{p.cash}}</div>
+<button type="button" aria-label="Remove player" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: #52525b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg></button>
+</div>
+</sc-for>
+<div style="display: flex; align-items: center; justify-content: space-between">
+<button type="button" style="height: 44px; padding: 0 12px 0 8px; display: inline-flex; align-items: center; gap: 6px; border: 0; background: transparent; color: #047857; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Add player</button>
+<span style="font-size: 12px; color: #52525b">4 players, 275 each. Codes come from the names and can be edited.</span>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #3f3f46">Game length</span>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #d4d4d8; border-radius: 10px">
+<button type="button" aria-pressed="false" style="flex: 1; height: 48px; border: 0; border-radius: 7px; background: transparent; color: #3f3f46; font-size: 15px; font-weight: 500">Short · 4 cycles</button>
+<button type="button" aria-pressed="true" style="flex: 1; height: 48px; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 15px; font-weight: 600">Long · 6 cycles</button>
+</div>
+<div style="font-size: 12px; color: #52525b">4 player games start as a long game. 2 players default to short, 5 to long.</div>
+<div style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; font-size: 12px; color: #52525b">A short game would remove:
+<sc-for list="{{removed}}" as="m" hint-placeholder-count="4">
+<span style="display: inline-flex; align-items: center; gap: 4px; height: 24px; padding: 0 8px; border-radius: 12px; border: 1px solid #d4d4d8; color: #52525b; text-decoration: line-through"><span style="width: 10px; height: 10px; border-radius: 5px; background: {{m.c}}; border: 1px solid rgba(24,24,27,.45)"></span>{{m.n}}</span>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #3f3f46">Current phase, limits the start price of new companies</span>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #d4d4d8; border-radius: 10px">
+<button type="button" aria-pressed="true" style="flex: 1; height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 14px; line-height: 18px; font-weight: 600"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #fde68a; border: 1px solid #a16207"></span>Yellow</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 500; color: #52525b">60–90</span></button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 0; border-radius: 7px; background: transparent; color: #3f3f46; font-size: 14px; line-height: 18px; font-weight: 500"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #bbf7d0; border: 1px solid #15803d"></span>Green</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #52525b">60–110</span></button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 0; border-radius: 7px; background: transparent; color: #3f3f46; font-size: 14px; line-height: 18px; font-weight: 500"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 12px; border-radius: 3px; background: #e9d5ff; border: 1px solid #7e22ce"></span>Purple</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #52525b">60–135</span></button>
+</div>
+</div>
+
+</div>
+
+<div style="height: 76px; flex: none; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 24px; border-top: 1px solid #e4e4e7">
+<button type="button" style="height: 48px; padding: 0 20px; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b; font-size: 15px; font-weight: 600">Cancel</button>
+<button type="button" style="height: 48px; padding: 0 24px; border: 0; border-radius: 8px; background: #047857; color: #fff; font-size: 15px; font-weight: 600">Start game</button>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":560,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+players: [
+{ name: 'Haoran', code: 'H', cash: 275 },
+{ name: 'Ari', code: 'A', cash: 275 },
+{ name: 'John', code: 'Jo', cash: 275 },
+{ name: 'James', code: 'Ja', cash: 275 }
+],
+removed: [
+{ n: 'Adaptive', c: '#9c83b1' },
+{ n: 'Overnight', c: '#383232' },
+{ n: 'Bridging', c: '#7dc1a5' },
+{ n: 'Spacious', c: '#9ed181' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

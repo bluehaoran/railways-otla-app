@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dividend view</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1024px; height: 768px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: #f4f4f5; color: #18181b; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 14px; line-height: 20px; overflow: hidden">
+
+<div style="height: 64px; flex: none; box-sizing: border-box; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #fff; border-bottom: 1px solid #e4e4e7">
+<div style="width: 124px; flex: none">
+<div style="font-weight: 700; font-size: 16px; line-height: 20px; white-space: nowrap">Friday game</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b; white-space: nowrap">Green · Long game</div>
+</div>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px">
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Track</button>
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Ownership</button>
+<button type="button" aria-pressed="false" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Scoreboard</button>
+<button type="button" aria-pressed="true" style="height: 44px; padding: 0 12px; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 14px; font-weight: 600">Dividend</button>
+</div>
+<div style="flex: 1"></div>
+<button type="button" style="height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 8px; background: #047857; color: #fff; font-size: 14px; font-weight: 600"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Start company</button>
+<button type="button" aria-label="Merge" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e4e4e7; border-radius: 8px; background: #fafafa; color: #a1a1aa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg></button>
+<button type="button" aria-label="Edit mode" aria-pressed="false" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button>
+<button type="button" aria-label="Undo" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+<button type="button" aria-label="Redo" aria-disabled="true" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e4e4e7; border-radius: 8px; background: #fafafa; color: #a1a1aa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/></svg></button>
+<button type="button" aria-label="Menu" style="width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #d4d4d8; border-radius: 8px; background: #fff; color: #18181b"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+</div>
+
+<div style="flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 12px 16px 16px; gap: 12px">
+
+<div style="display: flex; align-items: center; gap: 12px; min-height: 44px">
+<div style="font-weight: 700; font-size: 16px">Cycle 3 of 6</div>
+<div style="display: flex; gap: 6px">
+<sc-for list="{{rounds}}" as="rd" hint-placeholder-count="4">
+<span style="min-width: 48px; height: 32px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; padding: 0 10px; border-radius: 16px; border: {{rd.bd}}; background: {{rd.bg}}; color: {{rd.fg}}; font-size: 13px; font-weight: {{rd.fw}}">{{rd.label}}</span>
+</sc-for>
+</div>
+<span style="font-size: 14px; color: #52525b">Operating Round 1 · 1 of 6 companies done</span>
+</div>
+
+<div style="flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 416px; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 8px; min-height: 0">
+<sc-for list="{{list}}" as="c" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; box-sizing: border-box; border: {{c.bd}}; border-radius: 12px; background: #fff; overflow: hidden">
+<div style="display: flex; align-items: center; gap: 10px; height: {{c.h}}; box-sizing: border-box; padding: 0 14px; flex: none">
+<span style="flex: none; width: 34px; height: 24px; border-radius: 6px; background: {{c.color}}; color: {{c.ink}}; border: 1.5px solid rgba(24,24,27,.45); box-sizing: border-box; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">{{c.abbr}}</span>
+<span style="font-weight: 600">{{c.name}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: #52525b">@{{c.price}}</span>
+<span style="flex: 1"></span>
+<span style="font-size: 13px; font-weight: 500; color: {{c.stateInk}}">{{c.state}}</span>
+</div>
+<sc-if value="{{c.open}}" hint-placeholder-val="{{false}}">
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 4px 14px 16px">
+<div style="display: flex; align-items: flex-end; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<label style="font-size: 12px; font-weight: 600; color: #52525b">Earnings</label>
+<div style="width: 120px; height: 48px; box-sizing: border-box; display: flex; align-items: center; justify-content: flex-end; padding: 0 12px; border: 2px solid #047857; border-radius: 8px; background: #fff; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 20px">120</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px; flex: 1">
+<span style="font-size: 12px; font-weight: 600; color: #52525b">What the company does with it</span>
+<div style="display: flex; gap: 2px; padding: 3px; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 10px">
+<button type="button" aria-pressed="true" style="flex: 1; height: 42px; border: 0; border-radius: 7px; background: #fff; box-shadow: 0 1px 3px rgba(24,24,27,.2); color: #18181b; font-size: 14px; font-weight: 600">Pay out</button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 42px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">Withhold</button>
+<button type="button" aria-pressed="false" style="flex: 1; height: 42px; border: 0; border-radius: 7px; background: transparent; color: #52525b; font-size: 14px; font-weight: 500">No train</button>
+</div>
+</div>
+</div>
+<div style="font-size: 12px; line-height: 16px; color: #52525b">Minor company: each share pays 20% of earnings. The president card pays double.</div>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; min-height: 0">
+<div style="border: 1px solid #d4d4d8; border-radius: 12px; background: #fff; overflow: hidden">
+<div style="height: 44px; display: flex; align-items: center; padding: 0 14px; background: #fafafa; font-size: 12px; font-weight: 600; color: #52525b; border-bottom: 1px solid #e4e4e7">
+<span style="flex: 1">Payout preview for Express</span><span style="width: 56px; text-align: right">Shares</span><span style="width: 76px; text-align: right">Receives</span>
+</div>
+<sc-for list="{{pay}}" as="p" hint-placeholder-count="6">
+<div style="height: 40px; display: flex; align-items: center; padding: 0 14px; border-top: 1px solid #f4f4f5; color: {{p.ink}}">
+<span style="flex: 1; display: flex; align-items: center; gap: 8px"><span style="width: 24px; height: 24px; box-sizing: border-box; border-radius: 12px; background: {{p.bg}}; border: {{p.bd}}; color: {{p.fg}}; font-size: 12px; font-weight: 700; line-height: 21px; text-align: center">{{p.badge}}</span>{{p.who}}<span style="font-size: 12px; color: #52525b">{{p.dest}}</span></span>
+<span style="width: 56px; text-align: right; font-family: 'IBM Plex Mono', monospace">{{p.shares}}</span>
+<span style="width: 76px; text-align: right; font-family: 'IBM Plex Mono', monospace; font-weight: 600">{{p.amount}}</span>
+</div>
+</sc-for>
+<div style="height: 44px; display: flex; align-items: center; padding: 0 14px; border-top: 2px solid #18181b; font-weight: 700"><span style="flex: 1">Earnings</span><span style="width: 76px; text-align: right; font-family: 'IBM Plex Mono', monospace">120</span></div>
+</div>
+
+<div style="border: 2px solid #047857; border-radius: 12px; background: #ecfdf5; padding: 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>Price rises 1 step: 110 to 120</div>
+<div style="font-size: 14px; line-height: 20px">Payout is at least the share price and below 2x. Move the physical token to 120. It joins the back of the 120 queue.</div>
+<button type="button" style="height: 52px; border: 0; border-radius: 10px; background: #047857; color: #fff; font-size: 16px; font-weight: 600">Apply and move token</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+renderVals() {
+const rounds = [
+{ label: 'SR', bd: '1.5px solid #a1a1aa', bg: '#ffffff', fg: '#3f3f46', fw: 500 },
+{ label: 'OR1', bd: '1.5px solid #18181b', bg: '#18181b', fg: '#ffffff', fw: 700 },
+{ label: 'OR2', bd: '1.5px solid #a1a1aa', bg: '#ffffff', fg: '#3f3f46', fw: 500 },
+{ label: 'MR', bd: '1.5px solid #a1a1aa', bg: '#ffffff', fg: '#3f3f46', fw: 500 }
+];
+const done = { color: '#e87d3c', ink: '#18181b', abbr: 'U', name: 'Union', price: 150, h: '56px', bd: '1px solid #d4d4d8', open: false, state: 'Paid 200 · price 150 to 165', stateInk: '#047857' };
+const active = { color: '#9f3841', ink: '#ffffff', abbr: 'XP', name: 'Express', price: 110, h: '56px', bd: '2px solid #047857', open: true, state: 'Now', stateInk: '#047857' };
+const wait = (color, ink, abbr, name, price) => ({ color, ink, abbr, name, price, h: '56px', bd: '1px solid #d4d4d8', open: false, state: 'Waiting', stateInk: '#52525b' });
+const list = [
+done,
+active,
+wait('#385174', '#ffffff', 'NP', 'Northern Port', 90),
+wait('#b6a998', '#18181b', 'TU', 'Tunneling', 90),
+wait('#446e4c', '#ffffff', 'AG', 'Agricultural', 70),
+wait('#f1e1b9', '#18181b', 'RE', 'Resourceful', 60)
+];
+const E = 120;
+const unit = 0.2;
+const S = [
+{ badge: 'H', who: 'Haoran', dest: 'president', shares: 2, bg: '#9f3841', fg: '#ffffff' },
+{ badge: 'Jo', who: 'John', dest: '', shares: 1, bg: '#9f3841', fg: '#ffffff' },
+{ badge: 'A', who: 'Ari', dest: '', shares: 1, bg: '#9f3841', fg: '#ffffff' },
+{ badge: 'Ja', who: 'James', dest: '', shares: 0, bg: '#9f3841', fg: '#ffffff' },
+{ badge: '', who: 'Treasury', dest: 'to company', shares: 1, bg: 'transparent', fg: '#52525b', dashed: true },
+{ badge: '', who: 'Market', dest: 'to bank', shares: 0, bg: 'transparent', fg: '#52525b', solid: true }
+];
+const pay = S.map((s) => {
+const amt = Math.round(E * unit * s.shares);
+return {
+badge: s.badge, who: s.who, dest: s.dest, shares: s.shares,
+amount: amt === 0 ? '–' : String(amt),
+bg: s.bg, fg: s.fg,
+bd: s.dashed ? '2px dashed #52525b' : (s.solid ? '2px solid #52525b' : '1.5px solid rgba(24,24,27,.45)'),
+ink: s.shares === 0 ? '#71717a' : '#18181b'
+};
+});
+return { rounds, list, pay };
+}
+}
+</script>
+</body>
+</html>
