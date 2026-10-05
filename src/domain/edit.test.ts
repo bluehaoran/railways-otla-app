@@ -82,3 +82,11 @@ describe('settings', () => {
     expect(() => setShortGame(g, true)).toThrow()
   })
 })
+
+describe('share setters and saved games', () => {
+  it('cap a count at 99, the most a saved game accepts', () => {
+    const g = put(testGame(), 'express', { price: 80, president: J, treasury: 3 })
+    expect(setTreasuryShares(g, 'express', 500).companies.express.treasuryShares).toBe(99)
+    expect(setHolding(g, 'express', K, 100).companies.express.holdings[K]).toBe(99)
+  })
+})

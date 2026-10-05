@@ -8777,3 +8777,15 @@ Stop the preview server with Ctrl+C.
 git add scripts public vite.config.ts index.html package.json README.md
 git commit -m "feat: add offline install with a service worker and icons"
 ```
+
+---
+
+## Changes after the final review
+
+The code blocks above are the plan as executed. The final review led to these changes, which are in the code but not in the blocks above:
+
+- `src/state/saves.ts`: every index change starts from the index in storage, so a second tab cannot drop a saved game from the list. `refresh()`, `idOfKey()` and `indexKey` are new.
+- `src/state/saves.ts`: when storage is full, `write` first drops the undo history of the other saved games, and only then trims the game being saved.
+- `src/state/saves.ts`: `checkGame` requires share counts to be whole numbers from 0 to 99, held by known players, and no token on position 0.
+- `src/domain/edit.ts`: share counts are capped at `MAX_COUNT = 99`.
+- `src/state/game.ts`: `externalChange(key)` reloads the open game when another tab saved it. `useGame()` listens for the browser's `storage` event. The storage warnings now say to delete old saved games.

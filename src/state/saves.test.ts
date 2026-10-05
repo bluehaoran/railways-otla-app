@@ -179,3 +179,78 @@ describe('storage problems', () => {
     expect(saves.duplicate('g1')).toBeNull()
   })
 })
+
+// Final review fixes.
+describe('two tabs on one storage', () => {
+  it('keeps a game another tab saved in the list', () => {
+    const storage = memoryStorage()
+    const tabA = createSaves(storage)
+    tabA.write(save(sample('gA', 'A')))
+    const tabB = createSaves(storage)
+    tabB.write(save(sample('gB', 'B')))
+    tabA.write(save(sample('gA', 'A again')))
+    expect(tabA.index.value.map((e) => e.id)).toEqual(['gA', 'gB'])
+    expect(createSaves(storage).index.value.map((e) => e.id)).toEqual(['gA', 'gB'])
+  })
+
+  it('does not drop another tab’s game when removing one', () => {
+    const storage = memoryStorage()
+    const tabA = createSaves(storage)
+    tabA.write(save(sample('gA', 'A')))
+    tabA.write(save(sample('gC', 'C')))
+    createSaves(storage).write(save(sample('gB', 'B')))
+    tabA.remove('gC')
+    expect(createSaves(storage).index.value.map((e) => e.id)).toEqual(['gB', 'gA'])
+  })
+})
+
+describe('storage full with other saved games', () => {
+  it('drops the undo history of other games before trimming the game being saved', () => {
+    const g = sample()
+    const one = JSON.stringify(g).length
+    const saves = createSaves(memoryStorage(one * 60))
+    const steps = (id: string) => Array.from({ length: 40 }, (_, i) => ({ ...g, id, name: `step ${i}` }))
+    expect(saves.write(save({ ...g, id: 'old' }, steps('old')))).toEqual({ ok: true, kept: 40 })
+    expect(saves.write(save({ ...g, id: 'live' }, steps('live')))).toEqual({ ok: true, kept: 40 })
+    expect(saves.read('old')?.game.id).toBe('old')
+    expect(saves.read('old')?.undo).toHaveLength(0)
+    expect(saves.read('live')?.undo).toHaveLength(40)
+  })
+})
+
+describe('import of a file with invalid values', () => {
+  const edited = (change: (game: Game) => void) => {
+    const data = JSON.parse(exportGame(sample()))
+    change(data.game)
+    return JSON.stringify(data)
+  }
+
+  it('rejects share counts that are negative, fractional or absurd', () => {
+    expect(() => importGame(edited((g) => (g.companies.express.treasuryShares = -1)), [])).toThrow('companies.express')
+    expect(() => importGame(edited((g) => (g.companies.express.marketShares = 1.5)), [])).toThrow('companies.express')
+    expect(() => importGame(edited((g) => (g.companies.express.holdings = { p2: 1e9 })), [])).toThrow('companies.express')
+  })
+
+  it('rejects shares held by an unknown player', () => {
+    expect(() => importGame(edited((g) => (g.companies.express.holdings = { ghost: 1 })), [])).toThrow('companies.express')
+  })
+
+  it('rejects a token on position 0', () => {
+    const text = edited((g) => {
+      g.track[8] = []
+      g.track[0] = ['express']
+    })
+    expect(() => importGame(text, [])).toThrow('track')
+  })
+})
+
+describe('refresh', () => {
+  it('shows a game that another tab saved', () => {
+    const storage = memoryStorage()
+    const tabA = createSaves(storage)
+    createSaves(storage).write(save(sample('gB', 'B')))
+    expect(tabA.index.value).toHaveLength(0)
+    tabA.refresh()
+    expect(tabA.index.value.map((e) => e.id)).toEqual(['gB'])
+  })
+})

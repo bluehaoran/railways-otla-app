@@ -1,5 +1,6 @@
 import { useStorage } from '@vueuse/core'
 import { COMPANY_IDS } from '../domain/companies'
+import { MAX_COUNT } from '../domain/edit'
 import { newId } from '../domain/setup'
 import type { Game } from '../domain/types'
 
@@ -52,6 +53,8 @@ const STATUSES = ['unavailable', 'unstarted', 'active', 'merged', 'closed']
 
 const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
+/** A share count the views can draw: a whole number from 0 to MAX_COUNT. */
+const isCount = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0 && (v as number) <= MAX_COUNT
 
 /** Checks the shape of a game. Returns the first missing or invalid field, or null. */
 export function checkGame(g: unknown): string | null {
@@ -78,12 +81,15 @@ export function checkGame(g: unknown): string | null {
     const c = companies[id]
     if (!isObject(c) || !STATUSES.includes(c.status as string)) return `companies.${id}`
     if (!(c.president === null || (typeof c.president === 'string' && playerIds.has(c.president)))) return `companies.${id}`
-    if (!isObject(c.holdings) || !Object.values(c.holdings).every(isNumber)) return `companies.${id}`
-    if (!isNumber(c.treasuryShares) || !isNumber(c.marketShares)) return `companies.${id}`
+    if (!isObject(c.holdings) || !Object.values(c.holdings).every(isCount)) return `companies.${id}`
+    if (!Object.keys(c.holdings).every((holder) => playerIds.has(holder))) return `companies.${id}`
+    if (!isCount(c.treasuryShares) || !isCount(c.marketShares)) return `companies.${id}`
   }
 
   const track = g.track
   if (!Array.isArray(track) || track.length !== 27) return 'track'
+  // Position 0 means closed. A token never rests there.
+  if (Array.isArray(track[0]) && track[0].length > 0) return 'track'
   const onTrack = new Set<string>()
   for (const queue of track) {
     if (!Array.isArray(queue)) return 'track'
@@ -130,9 +136,49 @@ export function importGame(text: string, existingIds: string[]): Game {
 export function createSaves(storage: Storage = localStorage) {
   const index = useStorage<SaveIndexEntry[]>(INDEX_KEY, [], storage, {
     flush: 'sync',
+    // Off: with it on, VueUse skips writes made in the same tick as a change it heard.
+    // useGame() listens for changes from other tabs and calls refresh() instead.
     listenToStorageChanges: false,
     writeDefaults: false,
   })
+
+  /**
+   * The index as it is in storage now. Another tab may have changed it since this
+   * one read it, so every change starts from this, not from the copy in memory.
+   */
+  function stored(): SaveIndexEntry[] {
+    try {
+      const data: unknown = JSON.parse(storage.getItem(INDEX_KEY) ?? '[]')
+      if (!Array.isArray(data)) return []
+      return data.filter((e): e is SaveIndexEntry => isObject(e) && typeof e.id === 'string' && typeof e.name === 'string')
+    } catch {
+      return []
+    }
+  }
+
+  /** Shows the index as another tab left it. */
+  function refresh() {
+    index.value = stored()
+  }
+
+  /** Frees space: removes the undo and redo history of every saved game except `keepId`. */
+  function dropOtherHistories(keepId: string): boolean {
+    let freed = false
+    for (const entry of stored()) {
+      if (entry.id === keepId) continue
+      try {
+        const data: unknown = JSON.parse(storage.getItem(gameKey(entry.id)) ?? 'null')
+        if (!isObject(data)) continue
+        const has = (v: unknown) => Array.isArray(v) && v.length > 0
+        if (!has(data.undo) && !has(data.redo)) continue
+        storage.setItem(gameKey(entry.id), JSON.stringify({ ...data, undo: [], redo: [] }))
+        freed = true
+      } catch {
+        // An unreadable entry is left as it is.
+      }
+    }
+    return freed
+  }
 
   function touch(game: Game) {
     const entry: SaveIndexEntry = {
@@ -141,7 +187,7 @@ export function createSaves(storage: Storage = localStorage) {
       updatedAt: new Date().toISOString(),
       playerNames: game.players.map((p) => p.name),
     }
-    index.value = [entry, ...index.value.filter((e) => e.id !== game.id)]
+    index.value = [entry, ...stored().filter((e) => e.id !== game.id)]
   }
 
   /** Null for a missing entry and for one that cannot be read. */
@@ -164,17 +210,23 @@ export function createSaves(storage: Storage = localStorage) {
   }
 
   /**
-   * Stores a game. When storage is full it drops the redo steps and the oldest half of
-   * the undo steps, and tries again. `kept` is the number of undo steps that were stored.
+   * Stores a game. When storage is full it first drops the history of the other saved
+   * games. If that is not enough it drops this game's redo steps and the oldest half of
+   * its undo steps, and tries again. `kept` is the number of undo steps that were stored.
    */
   function write(save: SavedGame): { ok: boolean; kept: number } {
     let undo = save.undo
     let redo = save.redo
+    let othersDropped = false
     for (;;) {
       try {
         storage.setItem(gameKey(save.game.id), JSON.stringify({ ...save, undo, redo }))
         break
       } catch {
+        if (!othersDropped) {
+          othersDropped = true
+          if (dropOtherHistories(save.game.id)) continue
+        }
         if (undo.length === 0 && redo.length === 0) return { ok: false, kept: 0 }
         redo = []
         undo = undo.slice(0, Math.floor(undo.length / 2))
@@ -203,7 +255,7 @@ export function createSaves(storage: Storage = localStorage) {
 
   function remove(id: string) {
     storage.removeItem(gameKey(id))
-    index.value = index.value.filter((e) => e.id !== id)
+    index.value = stored().filter((e) => e.id !== id)
     if (getCurrent() === id) setCurrent(null)
   }
 
@@ -231,7 +283,10 @@ export function createSaves(storage: Storage = localStorage) {
     return game
   }
 
-  return { index, read, write, remove, duplicate, rename, importText, getCurrent, setCurrent }
+  /** The game id for a storage key of a saved game, or null for any other key. */
+  const idOfKey = (key: string | null) => (key !== null && key.startsWith(gameKey('')) ? key.slice(gameKey('').length) : null)
+
+  return { index, read, write, remove, duplicate, rename, importText, getCurrent, setCurrent, idOfKey, refresh, indexKey: INDEX_KEY }
 }
 
 export type Saves = ReturnType<typeof createSaves>

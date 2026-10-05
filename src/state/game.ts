@@ -34,12 +34,12 @@ export function createGameStore(saves: Saves) {
       redo: snapshots(history.redoStack.value),
     })
     if (!result.ok) {
-      saveWarning.value = 'Storage is full. This game is not being saved. Export it from the menu to keep it.'
+      saveWarning.value = 'Storage is full. This game is not being saved. Delete old saved games to free space, or export this game from the menu.'
     } else if (result.kept < undo.length) {
       // Storage kept only the newest undo steps. Drop the same steps here so the next save fits.
       history.undoStack.value = history.undoStack.value.slice(0, result.kept)
       history.redoStack.value = []
-      saveWarning.value = 'Storage is full. Older undo steps were dropped.'
+      saveWarning.value = 'Storage is full. Older undo steps were dropped. Delete old saved games to free space.'
     }
   }
 
@@ -85,6 +85,19 @@ export function createGameStore(saves: Saves) {
     saves.setCurrent(null)
   }
 
+  /**
+   * Another tab changed storage key `key`. If it is the open game, show that tab's
+   * version here, so the two tabs do not overwrite each other's changes.
+   */
+  function externalChange(key: string | null) {
+    const current = game.value
+    if (current === null || saves.idOfKey(key) !== current.id) return
+    const save = saves.read(current.id)
+    if (!save) return
+    load(save.game, save.undo.slice(0, HISTORY_CAP), save.redo)
+    saveWarning.value = 'This game was changed in another tab. The latest version is now shown.'
+  }
+
   return {
     game,
     canUndo: history.canUndo,
@@ -96,6 +109,7 @@ export function createGameStore(saves: Saves) {
     open,
     resume,
     close,
+    externalChange,
     saveWarning,
   }
 }
@@ -106,5 +120,16 @@ let shared: GameStore | undefined
 
 /** The app's game store. */
 export function useGame(): GameStore {
-  return (shared ??= createGameStore(useSaves()))
+  if (!shared) {
+    const saves = useSaves()
+    const store = createGameStore(saves)
+    // The browser sends this event to the other tabs when one tab writes to localStorage.
+    window.addEventListener('storage', (event) => {
+      if (event.storageArea !== localStorage) return
+      if (event.key === saves.indexKey) saves.refresh()
+      else store.externalChange(event.key)
+    })
+    shared = store
+  }
+  return shared
 }

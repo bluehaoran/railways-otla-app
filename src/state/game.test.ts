@@ -177,4 +177,36 @@ describe('game store', () => {
     expect(store.saveWarning.value).toMatch(/not being saved/)
     expect(store.game.value).toEqual(twoMinors())
   })
+
+  // Final review fix: the same game open in two tabs.
+  it('reloads the open game when another tab saved it, and says so', () => {
+    const storage = memoryStorage()
+    const tabA = setup(storage).store
+    tabA.create(twoMinors())
+    const tabB = setup(storage).store
+    expect(tabB.resume()).toBe(true)
+    tabA.commit(setCash(tabA.game.value!, J, 111))
+
+    tabB.externalChange('lostAtlas.game.g1')
+    expect(tabB.game.value!.players[0].cash).toBe(111)
+    expect(tabB.saveWarning.value).toMatch(/another tab/)
+    tabB.commit(setCash(tabB.game.value!, K, 222))
+    expect(setup(storage).saves.read('g1')?.game.players.map((p) => p.cash)).toEqual([111, 222])
+  })
+
+  it('ignores a storage change for another game', () => {
+    const { store } = setup()
+    store.create(twoMinors())
+    store.externalChange('lostAtlas.game.other')
+    store.externalChange(null)
+    expect(store.saveWarning.value).toBeNull()
+  })
+
+  it('tells the user how to free space when storage is full', () => {
+    const size = JSON.stringify(twoMinors()).length
+    const { store } = setup(memoryStorage(size * 6))
+    store.create(twoMinors())
+    for (let i = 1; i <= 30; i++) store.commit(setCash(store.game.value!, J, i))
+    expect(store.saveWarning.value).toMatch(/Delete old saved games/)
+  })
 })

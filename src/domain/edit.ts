@@ -2,9 +2,12 @@
 import { SHORT_GAME_REMOVED } from './companies'
 import type { Company, CompanyId, Game, Phase, PlayerId, ViewId } from './types'
 
-/** A share count: a whole number, 0 or more. A cleared input (null) counts as 0. */
+/** The largest share count the app stores. A saved game with a larger count is rejected. */
+export const MAX_COUNT = 99
+
+/** A share count: a whole number from 0 to MAX_COUNT. A cleared input (null) counts as 0. */
 function count(value: number | null): number {
-  return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0
+  return typeof value === 'number' && Number.isFinite(value) ? Math.min(MAX_COUNT, Math.max(0, Math.floor(value))) : 0
 }
 
 /** A cash amount: a whole number, may be negative. A cleared input (null) counts as 0. */
