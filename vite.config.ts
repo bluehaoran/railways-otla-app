@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  // GitHub Pages serves the app from /railways-otla-app/.
+  base: '/railways-otla-app/',
   plugins: [
     vue(),
     VitePWA({

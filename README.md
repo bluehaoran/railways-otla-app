@@ -14,6 +14,10 @@ npm run preview    # serve the production build
 npm run icons      # regenerate the PWA icons
 ```
 
+## Deployment
+
+Every push to `main` runs the tests, builds, and publishes to GitHub Pages at https://bluehaoran.github.io/railways-otla-app/ (`.github/workflows/deploy.yml`). The app is served from `/railways-otla-app/`, set as `base` in `vite.config.ts`. The dev and preview servers use the same path.
+
 ## Layout
 
 - `src/domain/`: the game rules. Pure TypeScript, no Vue. Each function takes a game and returns a new game.
