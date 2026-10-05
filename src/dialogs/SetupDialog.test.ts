@@ -121,4 +121,23 @@ describe('SetupDialog (spec D3 test 12)', () => {
     await setNames(w, ['  Haoran ', 'Ari'])
     expect((await start(w)).players.map((p) => p.name)).toEqual(['Haoran', 'Ari'])
   })
+
+  // Bug: tabbing through a cash field made it stop following the player count.
+  // The number input reports its value when it loses focus, even when nothing was typed.
+  it('keeps updating a cash field that was only focused, not edited', async () => {
+    const w = open()
+    await setNames(w, ['Haoran', 'Ari'])
+    const first = w.findAllComponents({ name: 'InputNumber' })[0]
+    first.vm.$emit('update:modelValue', 450)
+    await setNames(w, ['Haoran', 'Ari', 'John'])
+    expect((await start(w)).players.map((p) => p.cash)).toEqual([300, 300, 300])
+  })
+
+  it('keeps a cash value the user changed when the player count changes', async () => {
+    const w = open()
+    await setNames(w, ['Haoran', 'Ari'])
+    w.findAllComponents({ name: 'InputNumber' })[0].vm.$emit('update:modelValue', 500)
+    await setNames(w, ['Haoran', 'Ari', 'John'])
+    expect((await start(w)).players.map((p) => p.cash)).toEqual([500, 300, 300])
+  })
 })

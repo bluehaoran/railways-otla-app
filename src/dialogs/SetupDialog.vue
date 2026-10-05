@@ -87,7 +87,10 @@ function setCode(row: Row, code: string | undefined) {
 }
 
 function setCash(row: Row, cash: number | null) {
-  row.cash = cash ?? 0
+  const next = cash ?? 0
+  // The number input also reports its value on blur. Only a changed value is an edit.
+  if (next === row.cash) return
+  row.cash = next
   row.cashEdited = true
 }
 
