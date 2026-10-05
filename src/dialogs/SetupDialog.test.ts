@@ -140,4 +140,15 @@ describe('SetupDialog (spec D3 test 12)', () => {
     await setNames(w, ['Haoran', 'Ari', 'John'])
     expect((await start(w)).players.map((p) => p.cash)).toEqual([500, 300, 300])
   })
+
+  it('says which minors a long game includes and a short game removes', async () => {
+    const w = open()
+    await setNames(w, ['A', 'B', 'C'])
+    expect(w.text()).toContain('A long game includes:')
+    expect(w.text()).not.toContain('A short game would remove:')
+    expect(w.findAll('.pill.struck')).toHaveLength(0)
+    await button(w, 'Short').trigger('click')
+    expect(w.text()).toContain('A short game removes:')
+    expect(w.findAll('.pill.struck')).toHaveLength(4)
+  })
 })

@@ -204,8 +204,8 @@ function start() {
         />
         <span class="small muted">2 players default to short. 3 to 5 players default to long.</span>
         <div class="removed small muted">
-          {{ shortGame ? 'A short game removes:' : 'A short game would remove:' }}
-          <span v-for="m in removed" :key="m.id" class="pill">
+          {{ shortGame ? 'A short game removes:' : 'A long game includes:' }}
+          <span v-for="m in removed" :key="m.id" class="pill" :class="{ struck: shortGame }">
             <span class="dot" :style="{ background: m.color }" />{{ m.names[0] }}
           </span>
         </div>
@@ -285,6 +285,8 @@ function start() {
   padding: 0 8px;
   border: 1px solid var(--line-2);
   border-radius: 12px;
+}
+.pill.struck {
   text-decoration: line-through;
 }
 .dot {
