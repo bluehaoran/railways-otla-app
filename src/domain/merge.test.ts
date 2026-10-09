@@ -132,6 +132,26 @@ describe('applyMerge', () => {
     expect(merged.companies.tunneling).toMatchObject({ status: 'merged', operated: false, treasuryCash: 0 })
   })
 
+  it('combines the treasuries of A and B, with a ledger entry in a live game (P2-94)', () => {
+    let g = test7()
+    g = { ...g, companies: { ...g.companies, tunneling: { ...g.companies.tunneling, treasuryCash: 90 } } }
+    g = { ...g, companies: { ...g.companies, express: { ...g.companies.express, treasuryCash: 60 } } }
+    const merged = applyMerge(g, mergePlan(g, 'tunneling', 'express', 'union'))
+    expect(merged.companies.union.treasuryCash).toBe(150)
+    expect(merged.companies.union.ledger).toHaveLength(1)
+    expect(merged.companies.union.ledger[0]).toMatchObject({ delta: 150, auto: true })
+    expect(merged.companies.tunneling.treasuryCash).toBe(0)
+  })
+
+  it('combines treasuries but writes no ledger entry in a manual game (P2-93)', () => {
+    let g = test7()
+    g = { ...g, settings: { ...g.settings, live: false } }
+    g = { ...g, companies: { ...g.companies, tunneling: { ...g.companies.tunneling, treasuryCash: 90 } } }
+    const merged = applyMerge(g, mergePlan(g, 'tunneling', 'express', 'union'))
+    expect(merged.companies.union.treasuryCash).toBe(90)
+    expect(merged.companies.union.ledger).toEqual([])
+  })
+
   it('stores the chosen name of the major', () => {
     const g = test7()
     const merged = applyMerge(g, mergePlan(g, 'tunneling', 'express', 'system', { identity: 1 }))

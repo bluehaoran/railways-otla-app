@@ -1,8 +1,9 @@
 import { blankCompany } from './company'
-import { COMPANIES, MAJOR_IDS } from './companies'
+import { COMPANIES, MAJOR_IDS, displayName } from './companies'
 import { turnOrder } from './scoring'
 import { shares } from './shares'
 import { TRACK, priceOf, snapDown } from './track'
+import { addCash } from './treasury'
 import type { CompanyId, Game, PlayerId } from './types'
 
 export interface MergePlan {
@@ -125,7 +126,7 @@ export function applyMerge(game: Game, plan: MergePlan): Game {
   if (plan.newPresident === null) throw new Error('Choose the new president first')
   const index = TRACK.indexOf(plan.price)
   const retired = (id: CompanyId) => blankCompany(id, 'merged')
-  return {
+  const merged: Game = {
     ...game,
     companies: {
       ...game.companies,
@@ -146,4 +147,15 @@ export function applyMerge(game: Game, plan: MergePlan): Game {
       return i === index ? [...rest, plan.mId] : rest
     }),
   }
+  const cash = game.companies[plan.aId].treasuryCash + game.companies[plan.bId].treasuryCash
+  if (cash === 0) return merged
+  if (!game.settings.live) {
+    return {
+      ...merged,
+      companies: { ...merged.companies, [plan.mId]: { ...merged.companies[plan.mId], treasuryCash: cash } },
+    }
+  }
+  const a = displayName(game.companies[plan.aId])
+  const b = displayName(game.companies[plan.bId])
+  return addCash(merged, plan.mId, cash, `Merged: treasuries of ${a} and ${b}`)
 }

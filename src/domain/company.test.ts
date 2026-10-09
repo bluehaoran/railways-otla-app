@@ -15,12 +15,28 @@ describe('startCompany', () => {
       holdings: {},
       treasuryShares: 3,
       marketShares: 0,
-      treasuryCash: 0,
+      treasuryCash: 120,
       operated: false,
-      ledger: [],
+      ledger: [{ cycle: 1, round: 'SR', what: 'Start: winning bid', delta: 120, auto: true }],
     })
     expect(g.track[8]).toEqual(['express'])
     expect(validate(g).filter((w) => w.companyId)).toEqual([])
+  })
+
+  it('puts the bid in the company treasury in a live game, with one ledger entry', () => {
+    const g = startCompany(testGame(), 'express', K, 80, 120)
+    expect(g.settings.live).toBe(true)
+    expect(g.companies.express.treasuryCash).toBe(120)
+    expect(g.companies.express.ledger).toHaveLength(1)
+    expect(g.companies.express.ledger[0]).toMatchObject({ delta: 120, auto: true, cycle: 1, round: 'SR' })
+  })
+
+  it('leaves the treasury and ledger alone in a manual game (spec P2-93)', () => {
+    const manual = { ...testGame(), settings: { ...testGame().settings, live: false } }
+    const g = startCompany(manual, 'express', K, 80, 120)
+    expect(g.companies.express.treasuryCash).toBe(0)
+    expect(g.companies.express.ledger).toEqual([])
+    expect(g.players.find((p) => p.id === K)?.cash).toBe(-120)
   })
 
   it('joins the back of the queue', () => {
