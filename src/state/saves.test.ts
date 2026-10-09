@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { ImportError, checkGame, createSaves, exportFileName, exportGame, importGame } from './saves'
 import { memoryStorage } from './memoryStorage'
 import { legacyV1Game, put, testGame } from '../domain/fixtures'
+import { closeCompany } from '../domain/company'
+import { applyMerge, mergePlan } from '../domain/merge'
 import type { Game } from '../domain/types'
 
 function sample(id = 'g1', name = 'Friday game'): Game {
@@ -300,6 +302,21 @@ describe('migration from version 1', () => {
     const g = importGame(file(), [])
     expect(g.companies.express).toMatchObject({ status: 'active', operated: true, treasuryCash: 0, ledger: [] })
     expect(g.companies.tunneling).toMatchObject({ status: 'unstarted', operated: false })
+  })
+
+  it('marks closed and merged companies as not operated and the new major as operated (D6)', () => {
+    let g = put(testGame(['Haoran', 'Ari']), 'tunneling', { price: 70, president: 'p1', treasury: 3 })
+    g = put(g, 'express', { price: 80, president: 'p2', treasury: 3 })
+    g = put(g, 'resourceful', { price: 60, president: 'p1', treasury: 3 })
+    g = closeCompany(g, 'resourceful')
+    g = applyMerge(g, mergePlan(g, 'tunneling', 'express', 'union'))
+    expect(g.companies.union.status).toBe('active')
+    const text = JSON.stringify({ schemaVersion: 1, game: legacyV1Game(g) })
+    const m = importGame(text, []).companies
+    expect(m.resourceful).toMatchObject({ status: 'closed', operated: false })
+    expect(m.tunneling).toMatchObject({ status: 'merged', operated: false })
+    expect(m.express).toMatchObject({ status: 'merged', operated: false })
+    expect(m.union).toMatchObject({ status: 'active', operated: true })
   })
 
   it('exports as version 2 and re-imports equal', () => {

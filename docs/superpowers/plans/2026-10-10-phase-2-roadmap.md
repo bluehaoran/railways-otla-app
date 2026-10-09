@@ -14,7 +14,7 @@ Phase 2 is six independent subsystems. Each plan below ends in working, tested, 
 4. **Treasury cash on a merge.** Plan 1 leaves `applyMerge` setting the major's `treasuryCash` to 0. That loses nothing until Plan 5 makes cash non-zero, and Plan 5 (P2-50) owns the combine.
 5. **Open decisions D1 to D7, plus D8 from the rulebook check (R5).** These plans assume the recommended answer for each: D1 A (optional per game), D3 A (warn only), D4 A (hide the tab, show the wizard), D5 A (multiples of 10), D6 yes (`operated = true` for active companies), D7 no (do not remember the Key state), D8 turn order. Only D2 (quick add share) blocks work, and only Plan 6.
 6. **Stored size.** Every undo step is a full `Game`, and v2 adds ledgers. `write()` already halves history on a full quota. Not a blocker, but watch it once ledgers fill.
-7. **PWA update lag.** A tab still running the cached v1 app cannot read a v2 save (it shows the existing "unreadable" path and does not delete it). Acceptable, mention in release notes.
+7. **PWA update lag can lose data.** A v1 tab that already has the game open ignores the v2 save: its `read()` fails on version 2 and `externalChange` returns silently. It keeps its stale game, and its next commit overwrites the v2 save with a v1 envelope. The v2 tab then migrates that save, losing its own recent edits, resetting `live` to false and, once Phase 2 data exists, losing treasury cash and ledgers. The deployed v1 code cannot be fixed. Mitigation: close other tabs of the app before updating, say so in the release note, and Plan 5 should keep this in mind.
 
 ## Rulebook cross-check
 

@@ -284,21 +284,24 @@ interface Company {
   holdings: Record<PlayerId, number>    // regular cards only
   treasuryShares: number                // regular cards
   marketShares: number                  // regular cards
-  // Phase 2: treasuryCash: number; operated: boolean (minor has had its first Operating Round);
-  //          ledger: { cycle: number; round: 'SR'|'OR1'|'OR2'|'MR'; what: string; delta: number; auto: boolean }[]
+  treasuryCash: number                  // never part of a player's score
+  operated: boolean                     // minor has had its first Operating Round
+  ledger: { cycle: number; round: 'SR'|'OR1'|'OR2'|'MR'; what: string; delta: number; auto: boolean }[]
 }
 
 interface Game {
-  schemaVersion: 1
+  schemaVersion: 2
   id: string
   name: string
   createdAt: string                     // ISO
-  settings: { shortGame: boolean; phase: Phase; mainView: ViewId }
+  settings: { shortGame: boolean; phase: Phase; mainView: ViewId; live: boolean }
   players: Player[]                     // order = clockwise seating
   companies: Record<CompanyId, Company>
   track: CompanyId[][]                  // length 27; track[i] is the queue at TRACK[i]; index 0 is the front
-  // Phase 2: round: { cycle: number; type: 'SR'|'OR1'|'OR2'|'MR' }, cycleScores: Record<PlayerId, number>[],
-  //          soldThisRound: Record<PlayerId, CompanyId[]>  (cleared at the start of each Stock Round)
+  round: { cycle: number; type: 'SR'|'OR1'|'OR2'|'MR' }
+  cycleScores: Record<PlayerId, number>[]   // each player's total at the end of a cycle; index 0 is cycle 1
+  soldThisRound: Record<PlayerId, CompanyId[]>  // cleared at the start of each Stock Round
+  operating: { acted: CompanyId[]; issuedOrRedeemed: CompanyId[] }  // this Operating Round
 }
 ```
 

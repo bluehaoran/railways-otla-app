@@ -46,12 +46,12 @@ Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisa
 - `companies.ts` builds the static catalogue from `src/data/companies.json`. Text ink per company colour comes from `contrast.ts`.
 - `blankCompany(id, status)` in `company.ts` is the one place a `Company` is built. Use it, never a hand-written literal, so new fields get defaults.
 - Phase 2 fields: `Company.treasuryCash`, `operated`, `ledger`; `Game.round`, `cycleScores`, `soldThisRound`, `operating` (`acted`, `issuedOrRedeemed`), `settings.live`. Treasury cash is never scored. A game with `settings.live = false` runs no Phase 2 automation.
-- `fixtures.ts` has the test helpers `testGame()` and `put()`. App code does not import it.
+- `fixtures.ts` has the test helpers `testGame()`, `put()` and `legacyV1Game()` (a game as the Phase 1 app saved it, for migration tests). App code does not import it.
 
 ### `src/state/`: store and persistence
 
 - `game.ts`: `createGameStore(saves)` owns the current game in one `ref<Game | null>`. Every change goes through `commit(next)`, which assigns a whole new `Game`, so one user action is one undo step. Undo history is `useRefHistory` with `flush: 'sync'`. A sync watcher registered after it autosaves the game with its undo and redo stacks. The order of those two registrations matters.
-- `saves.ts`: `createSaves(storage)` handles the `lostAtlas.*` keys (index, current id, one key per game), export and import, `checkGame` shape validation, and the `MIGRATIONS` table (`1` is the Phase 2 step; v1 undo history is dropped on open). A change to the `Game` shape needs a schema version bump, a migration, and a matching update to `checkGame`.
+- `saves.ts`: `createSaves(storage)` handles the `lostAtlas.*` keys (index, current id, one key per game), export and import, `checkGame` shape validation, and the `MIGRATIONS` table (`MIGRATIONS[1]` is the Phase 2 step; v1 undo history is dropped on open). A change to the `Game` shape needs a schema version bump, a migration, and a matching update to `checkGame`.
 - `write()` handles a full quota by dropping other games' histories, then halving this game's undo stack. The store mirrors the trim through the returned `kept` count.
 - `useGame()` and `useSaves()` are the app singletons. `useGame()` also listens for the `storage` event so two tabs do not overwrite each other. Tests call the `create*` factories with `memoryStorage()` instead.
 

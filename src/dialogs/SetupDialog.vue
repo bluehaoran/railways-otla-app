@@ -123,6 +123,7 @@ function start() {
       players: rows.value.map((r) => ({ name: r.name.trim(), code: r.code.trim(), cash: r.cash })),
       shortGame: shortGame.value,
       phase: phase.value,
+      live: false, // Plan 3 replaces this with a Setup toggle
     }),
   )
   visible.value = false

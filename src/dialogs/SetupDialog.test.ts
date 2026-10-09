@@ -104,6 +104,13 @@ describe('SetupDialog (spec D3 test 12)', () => {
     expect(w.get('[data-testid="start-game"]').attributes('disabled')).toBeUndefined()
   })
 
+  it('starts new games in manual mode until the live UI exists', async () => {
+    const w = open()
+    await setNames(w, ['A', 'B'])
+    const game = await start(w)
+    expect(game.settings.live).toBe(false)
+  })
+
   it('uses the chosen phase and game name', async () => {
     const w = open()
     await setNames(w, ['A', 'B'])
