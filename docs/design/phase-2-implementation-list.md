@@ -193,8 +193,8 @@ D2. Quick add share (F5), entry point and behavior.
 - C. Open the Stock Round buy flow from the cell, so cash and ledger update.
 Also decide: can it add the president card; does it change the president, cash or scores automatically (recommended: no, warn only).
 
-D3. Issuing a share when the bank pool is at its 50% limit (rulebook silent).
-- A. Warn only. (Current)
+D3. Issuing a share when the bank pool is at its 50% limit. The limit applies to issue as well (rulebook p.10, "at any time"). Resolved with A.
+- A. Warn only. Warnings never block; `checkShareAction` returns `overLimit` and `validate` raises `market-limit`. (Chosen)
 - B. Block.
 
 D4. What does the fourth tab show during the Merger Round?
@@ -209,6 +209,10 @@ D5. Earnings input and fractional payouts.
 D6. Migration default for `operated` on existing active companies: true (assumes Phase 1 games were entered after the companies had operated). Confirm.
 
 D7. F3 Key state: remember across sessions? Default no. Confirm.
+
+D8. Stacking order when several companies rise at the end of a Stock Round (rulebook p.11 says tokens stack in the order they enter and does not say the order for this case). Resolved with A.
+- A. Current turn order, so the company that acts first stacks on top. (Chosen, implemented in rounds.ts `stockRoundRisers`)
+- B. Choose in the dialog.
 
 ## 6. Out of scope (unchanged)
 
