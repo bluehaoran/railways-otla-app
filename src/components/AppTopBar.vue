@@ -13,6 +13,8 @@ const props = defineProps<{
   canUndo: boolean
   canRedo: boolean
   canMerge: boolean
+  canStart: boolean
+  live: boolean
   badges: { ownership: number; scoreboard: number }
 }>()
 const view = defineModel<ViewId>('view', { required: true })
@@ -67,13 +69,21 @@ const items = [
     <span class="grow" />
 
     <div class="actions">
-      <Button label="Start company" icon="pi pi-plus" data-testid="start" @click="emit('start')" />
+      <Button
+        label="Start company"
+        icon="pi pi-plus"
+        :disabled="!canStart"
+        :title="live && !canStart ? 'Companies start in the Stock Round' : undefined"
+        data-testid="start"
+        @click="emit('start')"
+      />
       <Button
         label="Merge"
         icon="pi pi-share-alt"
         severity="secondary"
         outlined
         :disabled="!canMerge"
+        :title="live && !canMerge ? 'Mergers happen in the Merger Round, from the green phase' : undefined"
         data-testid="merge"
         @click="emit('merge')"
       />

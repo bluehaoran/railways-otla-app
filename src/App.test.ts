@@ -11,7 +11,7 @@ const [J, K] = ['p1', 'p2']
 function sample(): Game {
   let g = put(testGame(['Haoran', 'Ari']), 'tunneling', { price: 70, president: J, treasury: 3 })
   g = put(g, 'express', { price: 80, president: K, treasury: 3 })
-  return { ...g, name: 'Friday game' }
+  return { ...g, name: 'Friday game', settings: { ...g.settings, live: false } }
 }
 
 const button = (w: VueWrapper, text: string) => {
@@ -135,5 +135,79 @@ describe('App with a game', () => {
     const w = mount(App)
     expect(button(w, 'Ownership').find('.badge').text()).toBe('1')
     expect(button(w, 'Scoreboard').find('.badge').exists()).toBe(false)
+  })
+})
+
+describe('App in a live game', () => {
+  const live = (patch: Partial<Game> = {}): Game => {
+    const g = sample()
+    return { ...g, settings: { ...g.settings, live: true }, ...patch }
+  }
+  const at = (type: 'SR' | 'OR1' | 'OR2' | 'MR', cycle = 1, phase: 'yellow' | 'green' = 'yellow'): Game => {
+    const g = live()
+    return { ...g, round: { cycle, type }, settings: { ...g.settings, phase } }
+  }
+
+  it('shows no round bar in a manual game (review focus 1)', () => {
+    useGame().create(sample())
+    const w = mount(App)
+    expect(w.find('[data-testid="round-bar"]').exists()).toBe(false)
+    expect(w.get('[data-testid="start"]').attributes('disabled')).toBeUndefined()
+  })
+
+  it('shows the round bar and allows Start company in the Stock Round', () => {
+    useGame().create(at('SR'))
+    const w = mount(App)
+    expect(w.get('[data-testid="round-bar"]').text()).toContain('Cycle 1 of 6')
+    expect(w.get('[data-testid="start"]').attributes('disabled')).toBeUndefined()
+  })
+
+  it('disables Start company in an Operating Round', () => {
+    useGame().create(at('OR1'))
+    const w = mount(App)
+    expect(w.get('[data-testid="start"]').attributes('disabled')).toBeDefined()
+    expect(w.get('[data-testid="start"]').attributes('title')).toBe('Companies start in the Stock Round')
+  })
+
+  it('enables Merge only in the Merger Round from the green phase', () => {
+    useGame().create(at('MR', 1, 'green'))
+    expect(mount(App).get('[data-testid="merge"]').attributes('disabled')).toBeUndefined()
+    useGame().create(at('OR2', 1, 'green'))
+    expect(mount(App).get('[data-testid="merge"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('moves from OR1 to OR2 with the main button, and undo rewinds it (review focus 4)', async () => {
+    useGame().create(at('OR1'))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(useGame().game.value?.round.type).toBe('OR2')
+    useGame().undo()
+    expect(useGame().game.value?.round.type).toBe('OR1')
+  })
+
+  it('ends the Stock Round through the dialog', async () => {
+    useGame().create(at('SR'))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    await w.get('[data-testid="end-sr-confirm"]').trigger('click')
+    expect(useGame().game.value?.round).toEqual({ cycle: 1, type: 'OR1' })
+  })
+
+  it('shows the Export a train reminder after the last Operating Round (review focus 2)', async () => {
+    useGame().create(at('OR2'))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(useGame().game.value?.round).toEqual({ cycle: 2, type: 'SR' })
+    expect(useGame().game.value?.cycleScores).toHaveLength(1)
+    expect(w.text()).toContain('Export a train')
+  })
+
+  it('shows no reminder after the last cycle, and opens the Scoreboard', async () => {
+    useGame().create(at('OR2', 6))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(useGame().game.value?.round.cycle).toBe(7)
+    expect(w.text()).not.toContain('Take the top train')
+    expect(w.find('[data-testid="final-banner"]').exists()).toBe(true)
   })
 })

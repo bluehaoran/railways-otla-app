@@ -7,13 +7,17 @@ import Toast from 'primevue/toast'
 import { useToast } from 'primevue/usetoast'
 import AppTopBar, { type MenuAction } from './components/AppTopBar.vue'
 import EditBanner from './components/EditBanner.vue'
+import RoundBar from './components/RoundBar.vue'
 import SavesList from './components/SavesList.vue'
+import EndStockRoundDialog from './dialogs/EndStockRoundDialog.vue'
+import PhaseDialog from './dialogs/PhaseDialog.vue'
 import MergeWizard from './dialogs/MergeWizard.vue'
 import SettingsDialog from './dialogs/SettingsDialog.vue'
 import SetupDialog from './dialogs/SetupDialog.vue'
 import StartCompanyDialog from './dialogs/StartCompanyDialog.vue'
 import { renameGame } from './domain/edit'
 import { canMerge } from './domain/merge'
+import { actionsAllowed, advanceRound, isGameOver } from './domain/rounds'
 import { validate } from './domain/shares'
 import type { Game, ViewId } from './domain/types'
 import { downloadText } from './state/download'
@@ -55,6 +59,35 @@ const badges = computed(() => ({
   scoreboard: warnings.value.filter((w) => w.code === 'negative-cash').length,
 }))
 const mergeable = computed(() => game.value !== null && canMerge(game.value))
+const endStockOpen = ref(false)
+const phaseOpen = ref(false)
+const exportStep = ref(false)
+
+const actions = computed(() => (game.value ? actionsAllowed(game.value) : null))
+const canStart = computed(() => actions.value?.startCompany ?? false)
+const canMergeNow = computed(() => mergeable.value && (actions.value?.merge ?? false))
+
+function nextRound() {
+  const current = game.value
+  if (!current) return
+  if (current.round.type === 'SR') {
+    endStockOpen.value = true
+    return
+  }
+  const next = advanceRound(current)
+  commit(next)
+  if (isGameOver(next)) {
+    view.value = 'scoreboard'
+  } else if (next.round.type === 'SR') {
+    exportStep.value = true
+    phaseOpen.value = true
+  }
+}
+
+function openPhase() {
+  exportStep.value = false
+  phaseOpen.value = true
+}
 
 watch(
   saveWarning,
@@ -110,7 +143,9 @@ function removeSaved(id: string) {
       :game="game"
       :can-undo="canUndo"
       :can-redo="canRedo"
-      :can-merge="mergeable"
+      :can-merge="canMergeNow"
+      :can-start="canStart"
+      :live="game.settings.live"
       :badges="badges"
       @start="startOpen = true"
       @merge="mergeOpen = true"
@@ -118,6 +153,7 @@ function removeSaved(id: string) {
       @redo="store.redo()"
       @action="onAction"
     />
+    <RoundBar v-if="game.settings.live" :game="game" @next="nextRound" @phase="openPhase" />
     <EditBanner v-if="editMode" @done="editMode = false" />
 
     <main class="main">
@@ -127,13 +163,15 @@ function removeSaved(id: string) {
     </main>
 
     <footer class="bottom-actions">
-      <Button label="Start company" icon="pi pi-plus" class="primary" @click="startOpen = true" />
-      <Button label="Merge" icon="pi pi-share-alt" severity="secondary" outlined :disabled="!mergeable" @click="mergeOpen = true" />
+      <Button label="Start company" icon="pi pi-plus" class="primary" :disabled="!canStart" @click="startOpen = true" />
+      <Button label="Merge" icon="pi pi-share-alt" severity="secondary" outlined :disabled="!canMergeNow" @click="mergeOpen = true" />
     </footer>
 
     <div v-if="editMode" class="frame" aria-hidden="true" />
 
     <StartCompanyDialog v-model:visible="startOpen" :game="game" @start="commit" />
+    <EndStockRoundDialog v-model:visible="endStockOpen" :game="game" @update="commit" />
+    <PhaseDialog v-model:visible="phaseOpen" :game="game" :export-step="exportStep" @update="commit" />
     <MergeWizard v-model:visible="mergeOpen" :game="game" @merge="commit" />
     <SettingsDialog v-model:visible="settingsOpen" :game="game" :edit-mode="editMode" @update="commit" />
     <Dialog v-model:visible="savesOpen" modal header="Saved games" :style="{ width: 'min(640px, 100vw)' }">

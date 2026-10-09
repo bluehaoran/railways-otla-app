@@ -104,11 +104,32 @@ describe('SetupDialog (spec D3 test 12)', () => {
     expect(w.get('[data-testid="start-game"]').attributes('disabled')).toBeUndefined()
   })
 
-  it('starts new games in manual mode until the live UI exists', async () => {
+  it('starts new games with Score by hand by default', async () => {
     const w = open()
     await setNames(w, ['A', 'B'])
     const game = await start(w)
     expect(game.settings.live).toBe(false)
+  })
+
+  it('starts a game with round tracking when Track rounds is picked', async () => {
+    const w = open()
+    await setNames(w, ['A', 'B'])
+    const options = w.get('[data-testid="setup-live"]').findAll('button')
+    await options.find((b) => b.text() === 'Track rounds')!.trigger('click')
+    expect((await start(w)).settings.live).toBe(true)
+  })
+
+  it('goes back to Score by hand each time the dialog opens', async () => {
+    const w = open()
+    const options = w.get('[data-testid="setup-live"]').findAll('button')
+    await options.find((b) => b.text() === 'Track rounds')!.trigger('click')
+    await w.setProps({ visible: false })
+    await w.setProps({ visible: true })
+    const picked = w
+      .get('[data-testid="setup-live"]')
+      .findAll('button')
+      .find((b) => b.attributes('aria-pressed') === 'true')
+    expect(picked!.text()).toBe('Score by hand')
   })
 
   it('uses the chosen phase and game name', async () => {

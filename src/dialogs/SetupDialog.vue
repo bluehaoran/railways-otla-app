@@ -37,6 +37,7 @@ const rows = ref<Row[]>([])
 const shortGame = ref(true)
 const lengthPicked = ref(false)
 const phase = ref<Phase>('yellow')
+const live = ref(false)
 
 const lengthOptions = [
   { label: 'Short · 4 cycles', value: true },
@@ -64,6 +65,7 @@ function reset() {
   rows.value = [blankRow(), blankRow()]
   lengthPicked.value = false
   phase.value = 'yellow'
+  live.value = false
   refresh()
 }
 
@@ -123,7 +125,7 @@ function start() {
       players: rows.value.map((r) => ({ name: r.name.trim(), code: r.code.trim(), cash: r.cash })),
       shortGame: shortGame.value,
       phase: phase.value,
-      live: false, // Plan 3 replaces this with a Setup toggle
+      live: live.value,
     }),
   )
   visible.value = false
@@ -228,6 +230,23 @@ function start() {
             </span>
           </template>
         </SelectButton>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Round tracking</span>
+        <SelectButton
+          v-model="live"
+          :options="[{ label: 'Score by hand', value: false }, { label: 'Track rounds', value: true }]"
+          option-label="label"
+          option-value="value"
+          :allow-empty="false"
+          fluid
+          data-testid="setup-live"
+        />
+        <span class="small muted">
+          Track rounds adds a round bar and limits Start company and Merge to the right round. Cash and shares
+          are still entered by hand.
+        </span>
       </div>
     </div>
 
