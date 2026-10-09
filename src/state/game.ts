@@ -1,6 +1,6 @@
 import { ref, watch } from 'vue'
 import { useRefHistory } from '@vueuse/core'
-import { useSaves, type SavedGame, type Saves } from './saves'
+import { SCHEMA_VERSION, useSaves, type SavedGame, type Saves } from './saves'
 import type { Game } from '../domain/types'
 
 const HISTORY_CAP = 200
@@ -28,7 +28,7 @@ export function createGameStore(saves: Saves) {
     if (quiet || current === null) return
     const undo = snapshots(history.undoStack.value)
     const result = saves.write({
-      schemaVersion: 1,
+      schemaVersion: SCHEMA_VERSION,
       game: clone(current),
       undo,
       redo: snapshots(history.redoStack.value),

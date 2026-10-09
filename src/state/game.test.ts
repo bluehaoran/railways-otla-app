@@ -5,7 +5,7 @@ import { memoryStorage } from './memoryStorage'
 import { applyMerge, mergePlan } from '../domain/merge'
 import { moveToken } from '../domain/track'
 import { setCash } from '../domain/edit'
-import { put, testGame } from '../domain/fixtures'
+import { legacyV1Game, put, testGame } from '../domain/fixtures'
 import type { Game } from '../domain/types'
 
 const [J, K] = ['p1', 'p2']
@@ -208,5 +208,26 @@ describe('game store', () => {
     store.create(twoMinors())
     for (let i = 1; i <= 30; i++) store.commit(setCash(store.game.value!, J, i))
     expect(store.saveWarning.value).toMatch(/Delete old saved games/)
+  })
+})
+
+describe('opening a version 1 save', () => {
+  it('loads the game and drops its undo and redo history', () => {
+    const storage = memoryStorage()
+    const saves = createSaves(storage)
+    const g = put(testGame(), 'express', { price: 80, president: 'p1', treasury: 3 })
+    const oldGame = legacyV1Game(g)
+    storage.setItem(
+      `lostAtlas.game.${g.id}`,
+      JSON.stringify({ schemaVersion: 1, game: oldGame, undo: [oldGame], redo: [oldGame] }),
+    )
+    storage.setItem('lostAtlas.current', g.id)
+
+    const store = createGameStore(saves)
+    expect(store.resume()).toBe(true)
+    expect(store.game.value?.schemaVersion).toBe(2)
+    expect(store.game.value?.companies.express.operated).toBe(true)
+    expect(store.canUndo.value).toBe(false)
+    expect(store.canRedo.value).toBe(false)
   })
 })
