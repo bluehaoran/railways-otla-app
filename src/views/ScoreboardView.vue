@@ -1,11 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import InputNumber from 'primevue/inputnumber'
+import SelectButton from 'primevue/selectbutton'
+import CycleHistory from '../components/CycleHistory.vue'
 import CompanyTag from '../components/CompanyTag.vue'
 import PlayerCode from '../components/PlayerCode.vue'
 import { displayName } from '../domain/companies'
 import { setCash } from '../domain/edit'
 import { ranking, tieNotes, turnOrder } from '../domain/scoring'
+import { isGameOver } from '../domain/rounds'
 import { shares, validate } from '../domain/shares'
 import { priceOf } from '../domain/track'
 import type { Game, PlayerId } from '../domain/types'
@@ -48,11 +51,39 @@ const companyRows = computed(() =>
   }),
 )
 
+const mode = ref<'now' | 'cycles'>('now')
+const modeOptions = [
+  { label: 'Now', value: 'now' },
+  { label: 'By cycle', value: 'cycles' },
+]
+const over = computed(() => isGameOver(props.game))
+const winner = computed(() => cards.value[0])
+
 const lead = (id: PlayerId) => ({ lead: leaders.value.has(id) })
 </script>
 
 <template>
   <section class="scoreboard" :style="{ '--players': game.players.length }">
+    <SelectButton
+      v-if="game.settings.live"
+      v-model="mode"
+      class="mode"
+      :options="modeOptions"
+      option-label="label"
+      option-value="value"
+      :allow-empty="false"
+      aria-label="Scoreboard view"
+      data-testid="scoreboard-mode"
+    />
+    <p v-if="over" class="note final-banner" data-testid="final-banner">
+      <i class="pi pi-flag" aria-hidden="true" />
+      <span>
+        Final ranking. {{ winner.player.name }} wins with {{ winner.total }}.
+      </span>
+    </p>
+    <CycleHistory v-if="mode === 'cycles' && game.settings.live" :game="game" @update="(g) => emit('update', g)" />
+
+    <template v-if="mode === 'now' || !game.settings.live">
     <div class="ranked">
       <div
         v-for="c in cards"
@@ -123,6 +154,7 @@ const lead = (id: PlayerId) => ({ lead: leaders.value.has(id) })
       <i class="pi pi-info-circle" aria-hidden="true" />
       <span>{{ note }}</span>
     </p>
+    </template>
   </section>
 </template>
 
@@ -252,6 +284,15 @@ const lead = (id: PlayerId) => ({ lead: leaders.value.has(id) })
 }
 .total-value {
   font-size: 24px;
+}
+.final-banner {
+  margin: 0;
+  background: var(--lead);
+  border: 2px solid var(--primary);
+  font-weight: 600;
+}
+.mode :deep(button) {
+  min-height: 44px;
 }
 .tie-note {
   margin: 0;

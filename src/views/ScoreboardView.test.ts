@@ -100,3 +100,30 @@ describe('ScoreboardView', () => {
     expect(cell(w, '[data-row="cash"]', K).text()).not.toContain('Negative')
   })
 })
+
+describe('ScoreboardView in a live game', () => {
+  it('has no Now / By cycle switch in a manual game', () => {
+    const manual = { ...testGame(), settings: { ...testGame().settings, live: false } }
+    const w = mount(ScoreboardView, { props: { game: manual } })
+    expect(w.find('[data-testid="scoreboard-mode"]').exists()).toBe(false)
+  })
+
+  it('switches to the cycle history', async () => {
+    const w = mount(ScoreboardView, { props: { game: testGame() } })
+    expect(w.find('[data-testid="cycle-history"]').exists()).toBe(false)
+    const byCycle = w.get('[data-testid="scoreboard-mode"]').findAll('button').find((b) => b.text() === 'By cycle')!
+    await byCycle.trigger('click')
+    expect(w.find('[data-testid="cycle-history"]').exists()).toBe(true)
+  })
+
+  it('shows the final ranking banner when the game is over', () => {
+    const over = { ...testGame(), round: { cycle: 7, type: 'SR' as const } }
+    const w = mount(ScoreboardView, { props: { game: over } })
+    expect(w.get('[data-testid="final-banner"]').text()).toContain('Final ranking')
+  })
+
+  it('shows no banner during the game', () => {
+    const w = mount(ScoreboardView, { props: { game: testGame() } })
+    expect(w.find('[data-testid="final-banner"]').exists()).toBe(false)
+  })
+})
