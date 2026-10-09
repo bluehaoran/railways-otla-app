@@ -24,6 +24,16 @@ const lastUpdate = (w: VueWrapper) => {
 }
 
 describe('OwnershipView', () => {
+  it('has a key toggle that is collapsed by default and wired to the key', async () => {
+    const w = view(sample())
+    const toggle = w.get('[data-testid="key-toggle"]')
+    expect(toggle.attributes('aria-expanded')).toBe('false')
+    expect(w.get('#ownership-key').classes()).not.toContain('open')
+    await toggle.trigger('click')
+    expect(toggle.attributes('aria-expanded')).toBe('true')
+    expect(w.get('#ownership-key').classes()).toContain('open')
+  })
+
   it('lists active companies in turn order', () => {
     const w = view(sample())
     expect(w.findAll('[data-company]').map((r) => r.attributes('data-company'))).toEqual(['union', 'express', 'tunneling'])

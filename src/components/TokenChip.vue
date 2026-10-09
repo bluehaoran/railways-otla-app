@@ -9,7 +9,7 @@ const props = withDefaults(
     companyId: CompanyId
     presidentCode: string | null
     label: string
-    /** Position in its queue, shown when the queue holds more than one token. */
+    /** Overall turn order across the whole track, 1 acts first. */
     rank?: number | null
     selected?: boolean
   }>(),

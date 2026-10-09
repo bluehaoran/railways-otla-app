@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import Button from 'primevue/button'
 import Dialog from 'primevue/dialog'
 import InputNumber from 'primevue/inputnumber'
@@ -11,6 +12,10 @@ import { codeProblems, playerCodes } from '../domain/playerCodes'
 import { MAX_PLAYERS, MIN_PLAYERS, STARTING_CASH, defaultShortGame, newGame } from '../domain/setup'
 import { PHASE_MAX } from '../domain/track'
 import type { Game, Phase } from '../domain/types'
+
+// Same breakpoint as the CSS below. The code field is two characters wide on a phone.
+const narrow = useMediaQuery('(max-width: 719px)')
+const cashPt = { pcInputText: { root: { maxlength: 3 } } }
 
 const visible = defineModel<boolean>('visible', { required: true })
 const emit = defineEmits<{ start: [game: Game] }>()
@@ -136,7 +141,7 @@ function start() {
         <div class="player-row field-label">
           <span class="name">Players, in seating order</span>
           <span class="code">Code</span>
-          <span class="cash">Starting cash</span>
+          <span class="cash"><span class="wide">Starting cash</span><span class="narrow">Cash</span></span>
           <span class="remove" />
         </div>
         <div v-for="(row, i) in rows" :key="row.key">
@@ -154,7 +159,7 @@ function start() {
               :model-value="row.code"
               :invalid="problems[i] !== null"
               :aria-label="`Player ${i + 1} code`"
-              maxlength="6"
+              :maxlength="narrow ? 2 : 6"
               data-testid="player-code"
               @update:model-value="(v) => setCode(row, v)"
             />
@@ -164,6 +169,7 @@ function start() {
               :min="0"
               :aria-label="`Player ${i + 1} starting cash`"
               input-class="mono cash-input"
+              :pt="cashPt"
               @update:model-value="(v) => setCash(row, v)"
             />
             <button
@@ -234,6 +240,9 @@ function start() {
 </template>
 
 <style scoped>
+.narrow {
+  display: none;
+}
 .field {
   display: flex;
   flex-direction: column;
@@ -263,6 +272,40 @@ function start() {
 .player-row :deep(.cash-input) {
   width: 104px;
   text-align: right;
+}
+@media (max-width: 719px) {
+  .wide {
+    display: none;
+  }
+  .narrow {
+    display: inline;
+  }
+  .player-row {
+    gap: 4px;
+  }
+  .player-row .name {
+    flex: 1;
+    min-width: 0;
+  }
+  .player-row .code {
+    flex: none;
+    width: 2.75rem;
+  }
+  .player-row :deep(.code),
+  .player-row :deep(.cash-input) {
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+  .player-row .cash,
+  .player-row :deep(.cash-input) {
+    flex: none;
+    width: 3.5rem;
+  }
+  .player-row .remove {
+    flex: none;
+    width: 2rem;
+    height: 2rem;
+  }
 }
 .under {
   display: flex;

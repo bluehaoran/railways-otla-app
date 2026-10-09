@@ -50,10 +50,10 @@ describe('TrackView on a phone', () => {
     expect(prices(w)[26]).toBe(0)
   })
 
-  it('lists tokens in turn order with a rank badge in a shared queue', () => {
+  it('lists tokens in turn order with an overall turn number on every token', () => {
     const w = view(sample())
     expect(tokens(w)).toEqual(['northernPort', 'tunneling', 'resourceful'])
-    expect(w.findAll('.rank').map((r) => r.text())).toEqual(['1', '2'])
+    expect(w.findAll('.rank').map((r) => r.text())).toEqual(['1', '2', '3'])
     expect(w.get('[data-id="tunneling"]').attributes('aria-label')).toBe('Tunneling at 90, president K')
   })
 

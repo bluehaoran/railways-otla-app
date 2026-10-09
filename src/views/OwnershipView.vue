@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Select from 'primevue/select'
 import CompanyTag from '../components/CompanyTag.vue'
 import CountStepper from '../components/CountStepper.vue'
@@ -16,6 +16,9 @@ import type { CompanyId, Game, PlayerId } from '../domain/types'
 
 const props = defineProps<{ game: Game; editMode: boolean }>()
 const emit = defineEmits<{ update: [game: Game] }>()
+
+/** The key is collapsed on a phone. Wide screens always show it. */
+const keyOpen = ref(false)
 
 const warnings = computed(() => validate(props.game))
 const codeOf = (id: PlayerId | null) => props.game.players.find((p) => p.id === id)?.code ?? ''
@@ -166,7 +169,19 @@ function transfer(id: CompanyId, to: PlayerId) {
       </div>
     </div>
 
-    <div class="legend small">
+    <button
+      type="button"
+      class="key-toggle"
+      data-testid="key-toggle"
+      aria-controls="ownership-key"
+      :aria-expanded="keyOpen"
+      @click="keyOpen = !keyOpen"
+    >
+      <i class="pi pi-info-circle" aria-hidden="true" />
+      <span>Key</span>
+      <i class="pi" :class="keyOpen ? 'pi-chevron-up' : 'pi-chevron-down'" aria-hidden="true" />
+    </button>
+    <div id="ownership-key" class="legend small" :class="{ open: keyOpen }">
       <span><ShareCircle kind="share" company-id="express" code="H" />Share, letter is the holder</span>
       <span><ShareCircle kind="president" company-id="express" code="H" />President card, counts as 2 shares</span>
       <span><ShareCircle kind="treasury" />In company treasury</span>
@@ -308,14 +323,35 @@ function transfer(id: CompanyId, to: PlayerId) {
   gap: 8px 24px;
   color: var(--ink-2);
 }
-.legend span {
+/* Direct children only: a bare "span" would also restyle the circles inside them. */
+.legend > span {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
+.key-toggle {
+  display: none;
+}
 @media (max-width: 719px) {
   .ownership {
     padding: 8px;
+  }
+  .key-toggle {
+    align-self: flex-start;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    background: var(--card);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .legend:not(.open) {
+    display: none;
   }
 }
 </style>

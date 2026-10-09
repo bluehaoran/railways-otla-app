@@ -146,12 +146,12 @@ function onDrop(payload: { id: CompanyId; index: number; slot: number }) {
         </div>
         <TrackQueue :index="i" :edit-mode="editMode" @drop="onDrop">
           <TokenChip
-            v-for="(id, slot) in game.track[i]"
+            v-for="id in game.track[i]"
             :key="id"
             :company-id="id"
             :president-code="codeOf(id)"
             :label="tokenLabel(id, i)"
-            :rank="game.track[i].length > 1 ? slot + 1 : null"
+            :rank="order.indexOf(id) + 1"
             :selected="id === selectedId"
             @click="selectedId = id"
           />
