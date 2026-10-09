@@ -62,8 +62,8 @@ describe('redeem (spec D3 test 18)', () => {
 describe('one action per Operating Round (review focus 3, rulebook R1)', () => {
   it('refuses a second issue and a redeem after an issue', () => {
     const next = issueShare(g110(), 'express')
-    expect(checkShareAction(next, 'express', 'issue')).toEqual({ ok: false, reason: 'already-acted' })
-    expect(checkShareAction(next, 'express', 'redeem')).toEqual({ ok: false, reason: 'already-acted' })
+    expect(checkShareAction(next, 'express', 'issue')).toEqual({ ok: false, reason: 'already-issued-or-redeemed' })
+    expect(checkShareAction(next, 'express', 'redeem')).toEqual({ ok: false, reason: 'already-issued-or-redeemed' })
   })
 
   it('refuses once the company has operated', () => {

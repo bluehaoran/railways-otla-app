@@ -321,12 +321,13 @@ Shares of a player in a company: `holdings[p] + (president === p ? 2 : 0)`.
 | `turnOrder(game)` | Active companies by index descending, then queue position ascending. |
 | `playerTotal(game, playerId)` | See A4. |
 | `ranking(game)` | Players sorted by total descending, tie-break by `turnOrder` presidency. Returns total, rank and a `tieBreakApplied` flag. |
-| `validate(game)` | Returns warnings (never blocks): share sum, 60% limit, 50% market limit, president missing, president outvoted, negative cash. |
+| `validate(game)` | Returns warnings (never blocks): share sum, 60% limit, 50% market limit, president missing, president outvoted, negative cash, negative company treasury (`negative-treasury`). |
 | `presidencyCandidate(game, id)` | Player who should take the presidency, or null. |
 | `transferPresidency(game, id, to)` | Applies the exchange from A4. |
 | `mergePlan(game, aId, bId, mId)` | Returns `{ newPresident | needsChoice, tiedPlayers, holdings, treasuryShares, marketShares, price }` as in A4. Pure. |
 | `applyMerge(game, plan)` | Applies the plan. |
 | `playerCode(names)` | See B6. |
+| Phase 2 modules | `treasury.ts` (ledger entries, manual entries), `dividend.ts` (`dividendPlan`, `applyDividend`), `issue.ts` (issue and redeem), `stock.ts` (buy, sell, start with cash, sold record), `rounds.ts` (round sequence, snapshots, End Stock Round, next to operate). |
 
 ## B5. State and history
 

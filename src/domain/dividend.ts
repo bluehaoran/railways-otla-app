@@ -1,7 +1,7 @@
 import { kindOf } from './companies'
 import { closeCompany } from './company'
 import { TOTAL_SHARES, shares } from './shares'
-import { TOP, TRACK, findToken, moveToken } from './track'
+import { TOP, TRACK, findToken, moveToken, priceOf } from './track'
 import { addCash } from './treasury'
 import type { CompanyId, Game, PlayerId } from './types'
 
@@ -29,6 +29,8 @@ export interface DividendPlan {
 /**
  * Previews a dividend decision. Does not change the game.
  * `earnings` is a whole multiple of 10 (decision D5). No train ignores it.
+ * Throws for a company that already acted, so a caller must check `game.operating.acted`
+ * first (for example in a Vue `computed`).
  */
 export function dividendPlan(game: Game, id: CompanyId, earnings: number, choice: DividendChoice): DividendPlan {
   const company = game.companies[id]
@@ -68,6 +70,9 @@ export function dividendPlan(game: Game, id: CompanyId, earnings: number, choice
 /** Applies a plan as one step: cash, treasury, the price move, and the company's acted flags. */
 export function applyDividend(game: Game, plan: DividendPlan): Game {
   const id = plan.companyId
+  if (game.operating.acted.includes(id)) throw new Error(`${id} has already operated this round`)
+  if (game.companies[id]?.status !== 'active') throw new Error(`${id} is not an active company`)
+  if (priceOf(game, id) !== plan.price) throw new Error(`The plan for ${id} is stale: the price has changed`)
   let g: Game = {
     ...game,
     players: game.players.map((p) => ({ ...p, cash: p.cash + (plan.players[p.id] ?? 0) })),

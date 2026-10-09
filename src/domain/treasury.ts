@@ -28,6 +28,6 @@ export function manualEntry(
   reason: ManualReason,
   amount: number,
 ): Game {
-  if (!Number.isFinite(amount) || amount <= 0) throw new RangeError('The amount must be more than 0')
+  if (!Number.isInteger(amount) || amount <= 0) throw new RangeError('The amount must be a whole number above 0')
   return addCash(game, id, kind === 'spend' ? -amount : amount, reason, false)
 }

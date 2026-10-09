@@ -43,7 +43,7 @@ describe('manualEntry', () => {
     ])
   })
 
-  it.each([0, -5, NaN, Infinity])('rejects the amount %s', (amount) => {
+  it.each([0, -5, NaN, Infinity, 12.5])('rejects the amount %s', (amount) => {
     expect(() => manualEntry(base(), 'express', 'spend', 'Train', amount)).toThrow(RangeError)
   })
 })

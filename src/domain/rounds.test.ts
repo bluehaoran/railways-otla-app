@@ -39,14 +39,17 @@ describe('round order (spec D3 test 20)', () => {
     expect(seen).toEqual(['1SR', '1OR1', '1OR2', '1MR', '2SR'])
   })
 
-  it('plays no Merger Round when the phase turns green after the Operating Rounds (Export a train)', () => {
-    let g = withRound(testGame(), 1, 'OR2')
-    g = advanceRound(g)
+  it('reads the phase when OR2 ends: a phase change after leaving OR2 adds no Merger Round', () => {
+    const yellow = withRound(testGame(), 1, 'OR2')
+    let g = advanceRound(yellow)
+    expect(roundOf(g)).toBe('2SR')
     g = setPhase(g, 'green')
     expect(roundOf(g)).toBe('2SR')
+    const early = advanceRound(setPhase(yellow, 'green'))
+    expect(roundOf(early)).toBe('1MR')
   })
 
-  it('has 4 cycles in a Short Game and 6 in a Long Game, and ends after the last (review focus 5 style)', () => {
+  it('has 4 cycles in a Short Game and 6 in a Long Game, and ends after the last', () => {
     const long = testGame()
     expect(cycleCount(long)).toBe(6)
     const short = { ...testGame(), settings: { ...testGame().settings, shortGame: true } }
@@ -126,7 +129,7 @@ describe('end of Stock Round (spec D3 test 17)', () => {
     expect(priceOf(next, 'tunneling')).toBe(80)
   })
 
-  it('stays at 500 and goes to the back (review focus 5)', () => {
+  it('stays at 500 and goes to the back', () => {
     let g = full(500, 'express')
     g = put(g, 'tunneling', { price: 500, president: K, treasury: 3 })
     const next = endStockRound(g)

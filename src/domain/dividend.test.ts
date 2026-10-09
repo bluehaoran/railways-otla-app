@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { applyDividend, dividendPlan } from './dividend'
 import { put, testGame } from './fixtures'
-import { priceOf } from './track'
+import { moveToken, priceOf } from './track'
 
 const [J, K] = ['p1', 'p2']
 /** A minor: J president (2), K 1 share, 1 in the treasury, 1 in the bank pool. */
@@ -82,6 +82,23 @@ describe('dividendPlan price effect', () => {
 })
 
 describe('applyDividend', () => {
+  it('refuses to apply the same plan twice', () => {
+    const g = express(80)
+    const plan = dividendPlan(g, 'express', 120, 'payout')
+    const first = applyDividend(g, plan)
+    expect(first.players.map((p) => p.cash)).toEqual([48, 24])
+    expect(() => applyDividend(first, plan)).toThrow(Error)
+  })
+
+  it('refuses a plan computed before the price moved', () => {
+    const g = express(80)
+    const plan = dividendPlan(g, 'express', 120, 'payout')
+    const moved = moveToken(g, 'express', 1)
+    if (moved.kind !== 'moved') throw new Error('expected a move')
+    expect(priceOf(moved.game, 'express')).toBe(90)
+    expect(() => applyDividend(moved.game, plan)).toThrow(Error)
+  })
+
   it('credits players and the treasury, raises the price and marks the company as operated', () => {
     const g = express(80)
     const next = applyDividend(g, dividendPlan(g, 'express', 120, 'payout'))

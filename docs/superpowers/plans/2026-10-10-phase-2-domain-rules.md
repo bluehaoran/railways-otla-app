@@ -593,7 +593,7 @@ Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>"
 - Consumes: `addCash` (Task 1), `closeCompany`, `MARKET_LIMIT` (`shares.ts`), `moveToken`, `priceOf`.
 - Produces:
   - `type ShareAction = 'issue' | 'redeem'`
-  - `type ShareActionCheck = { ok: true; overLimit: boolean } | { ok: false; reason: 'not-active' | 'already-operated' | 'already-acted' | 'no-treasury-share' | 'no-market-share' }`
+  - `type ShareActionCheck = { ok: true; overLimit: boolean } | { ok: false; reason: 'not-active' | 'already-operated' | 'already-issued-or-redeemed' | 'no-treasury-share' | 'no-market-share' }`
   - `checkShareAction(game: Game, id: CompanyId, action: ShareAction): ShareActionCheck`
   - `issueShare(game: Game, id: CompanyId): Game` and `redeemShare(game: Game, id: CompanyId): Game` (both throw `Error` when `checkShareAction` is not ok)
 
@@ -668,8 +668,8 @@ describe('redeem (spec D3 test 18)', () => {
 describe('one action per Operating Round (review focus 3, rulebook R1)', () => {
   it('refuses a second issue and a redeem after an issue', () => {
     const next = issueShare(g110(), 'express')
-    expect(checkShareAction(next, 'express', 'issue')).toEqual({ ok: false, reason: 'already-acted' })
-    expect(checkShareAction(next, 'express', 'redeem')).toEqual({ ok: false, reason: 'already-acted' })
+    expect(checkShareAction(next, 'express', 'issue')).toEqual({ ok: false, reason: 'already-issued-or-redeemed' })
+    expect(checkShareAction(next, 'express', 'redeem')).toEqual({ ok: false, reason: 'already-issued-or-redeemed' })
   })
 
   it('refuses once the company has operated', () => {
@@ -704,14 +704,14 @@ export type ShareAction = 'issue' | 'redeem'
 
 export type ShareActionCheck =
   | { ok: true; overLimit: boolean }
-  | { ok: false; reason: 'not-active' | 'already-operated' | 'already-acted' | 'no-treasury-share' | 'no-market-share' }
+  | { ok: false; reason: 'not-active' | 'already-operated' | 'already-issued-or-redeemed' | 'no-treasury-share' | 'no-market-share' }
 
 /** Whether a company may issue or redeem a share now. A pool over the 50% limit is a warning (`overLimit`). */
 export function checkShareAction(game: Game, id: CompanyId, action: ShareAction): ShareActionCheck {
   const company = game.companies[id]
   if (!company || company.status !== 'active' || priceOf(game, id) === null) return { ok: false, reason: 'not-active' }
   if (game.operating.acted.includes(id)) return { ok: false, reason: 'already-operated' }
-  if (game.operating.issuedOrRedeemed.includes(id)) return { ok: false, reason: 'already-acted' }
+  if (game.operating.issuedOrRedeemed.includes(id)) return { ok: false, reason: 'already-issued-or-redeemed' }
   if (action === 'issue') {
     if (company.treasuryShares < 1) return { ok: false, reason: 'no-treasury-share' }
     return { ok: true, overLimit: company.marketShares + 1 > MARKET_LIMIT[kindOf(id)] }

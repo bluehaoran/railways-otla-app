@@ -57,6 +57,12 @@ Checked against `docs/reference/RailwaysRulebook-CleanFonts.pdf` (printed pages 
 
 Plans 4 and 5 are independent once Plan 3 lands and can be built in either order.
 
+Notes from Plan 2:
+
+- `setLive(true)` on a game that already has started companies must set `operated = true` for the active companies, or the Setup toggle must be the only place `live` is chosen.
+- The Export a train / phase change must be entered after the Merger Round gate, because `hasMergerRound` reads the phase at the moment OR2 ends.
+- The dividend view must check `operating.acted` before calling `dividendPlan` (it throws for a company that already acted), and show `newPrice` against `price`, not `steps`, at 500.
+
 ## Not planned here
 
 Design backlog in list section 4 (new boards). Plans 3 to 6 call out the boards each needs, and a plan stops at its first UI task if the board is missing.

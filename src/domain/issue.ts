@@ -9,14 +9,14 @@ export type ShareAction = 'issue' | 'redeem'
 
 export type ShareActionCheck =
   | { ok: true; overLimit: boolean }
-  | { ok: false; reason: 'not-active' | 'already-operated' | 'already-acted' | 'no-treasury-share' | 'no-market-share' }
+  | { ok: false; reason: 'not-active' | 'already-operated' | 'already-issued-or-redeemed' | 'no-treasury-share' | 'no-market-share' }
 
 /** Whether a company may issue or redeem a share now. A pool over the 50% limit is a warning (`overLimit`). */
 export function checkShareAction(game: Game, id: CompanyId, action: ShareAction): ShareActionCheck {
   const company = game.companies[id]
   if (!company || company.status !== 'active' || priceOf(game, id) === null) return { ok: false, reason: 'not-active' }
   if (game.operating.acted.includes(id)) return { ok: false, reason: 'already-operated' }
-  if (game.operating.issuedOrRedeemed.includes(id)) return { ok: false, reason: 'already-acted' }
+  if (game.operating.issuedOrRedeemed.includes(id)) return { ok: false, reason: 'already-issued-or-redeemed' }
   if (action === 'issue') {
     if (company.treasuryShares < 1) return { ok: false, reason: 'no-treasury-share' }
     return { ok: true, overLimit: company.marketShares + 1 > MARKET_LIMIT[kindOf(id)] }
