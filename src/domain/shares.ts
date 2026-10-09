@@ -26,6 +26,7 @@ export type WarningCode =
   | 'no-president'
   | 'president-outvoted'
   | 'negative-cash'
+  | 'negative-treasury'
 
 export interface Warning {
   code: WarningCode
@@ -66,6 +67,10 @@ export function validate(game: Game): Warning[] {
         companyId,
         message: `${name}: the market holds ${company.marketShares} shares, the limit is ${MARKET_LIMIT[kind]}`,
       })
+    }
+
+    if (company.treasuryCash < 0) {
+      out.push({ code: 'negative-treasury', companyId, message: `${name}: treasury cash is ${company.treasuryCash}` })
     }
 
     const president = game.players.find((p) => p.id === company.president)

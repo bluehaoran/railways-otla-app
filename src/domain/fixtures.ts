@@ -1,6 +1,6 @@
 // Test helpers. Not imported by app code.
 import { newGame } from './setup'
-import type { CompanyId, Game, PlayerId } from './types'
+import type { CompanyId, Game, PlayerId, RoundType } from './types'
 
 const PRICES = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 135, 150, 165, 180, 200, 220, 245, 270, 300, 330, 360, 400, 450, 500]
 
@@ -52,4 +52,9 @@ export function legacyV1Game(game: Game): Record<string, unknown> {
   void live
   const { id, name, createdAt, players, track } = game
   return { id, name, createdAt, schemaVersion: 1, settings, players, companies, track }
+}
+
+/** Sets the cycle and round. */
+export function withRound(game: Game, cycle: number, type: RoundType): Game {
+  return { ...game, round: { cycle, type } }
 }
