@@ -17,8 +17,8 @@ const game = (id: string, name: string): Game => ({ ...testGame(['Haoran', 'Ari'
 
 function setup() {
   const saves = createSaves(memoryStorage())
-  saves.write({ schemaVersion: 1, game: game('g1', 'Friday game'), undo: [], redo: [] })
-  saves.write({ schemaVersion: 1, game: game('g2', 'Sunday game'), undo: [], redo: [] })
+  saves.write({ schemaVersion: 2, game: game('g1', 'Friday game'), undo: [], redo: [] })
+  saves.write({ schemaVersion: 2, game: game('g2', 'Sunday game'), undo: [], redo: [] })
   const w = mount(SavesList, { props: { saves, currentId: 'g1' } })
   return { saves, w }
 }

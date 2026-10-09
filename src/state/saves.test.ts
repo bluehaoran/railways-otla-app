@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { ImportError, checkGame, createSaves, exportFileName, exportGame, importGame } from './saves'
 import { memoryStorage } from './memoryStorage'
-import { put, testGame } from '../domain/fixtures'
+import { legacyV1Game, put, testGame } from '../domain/fixtures'
 import type { Game } from '../domain/types'
 
 function sample(id = 'g1', name = 'Friday game'): Game {
@@ -9,7 +9,7 @@ function sample(id = 'g1', name = 'Friday game'): Game {
   return { ...g, id, name }
 }
 
-const save = (game: Game, undo: Game[] = [], redo: Game[] = []) => ({ schemaVersion: 1 as const, game, undo, redo })
+const save = (game: Game, undo: Game[] = [], redo: Game[] = []) => ({ schemaVersion: 2 as const, game, undo, redo })
 
 describe('export and import (spec D3 test 14)', () => {
   it('returns an equal game', () => {
@@ -18,7 +18,7 @@ describe('export and import (spec D3 test 14)', () => {
   })
 
   it('wraps the game with its schema version', () => {
-    expect(JSON.parse(exportGame(sample()))).toEqual({ schemaVersion: 1, game: sample() })
+    expect(JSON.parse(exportGame(sample()))).toEqual({ schemaVersion: 2, game: sample() })
   })
 
   it('assigns a new id when the id already exists', () => {
@@ -29,9 +29,9 @@ describe('export and import (spec D3 test 14)', () => {
   })
 
   it('rejects an unknown schema version with a clear message', () => {
-    const text = JSON.stringify({ schemaVersion: 2, game: sample() })
+    const text = JSON.stringify({ schemaVersion: 3, game: sample() })
     expect(() => importGame(text, [])).toThrow(ImportError)
-    expect(() => importGame(text, [])).toThrow('version 2')
+    expect(() => importGame(text, [])).toThrow('version 3')
   })
 
   it('names the export file after the game', () => {
@@ -252,5 +252,32 @@ describe('refresh', () => {
     expect(tabA.index.value).toHaveLength(0)
     tabA.refresh()
     expect(tabA.index.value.map((e) => e.id)).toEqual(['gB'])
+  })
+})
+
+describe('migration from version 1', () => {
+  const file = () => JSON.stringify({ schemaVersion: 1, game: legacyV1Game(sample()) })
+
+  it('imports a version 1 export as a version 2 game with defaults', () => {
+    const g = importGame(file(), [])
+    expect(g.schemaVersion).toBe(2)
+    expect(g.settings.live).toBe(false)
+    expect(g.round).toEqual({ cycle: 1, type: 'SR' })
+    expect(g.cycleScores).toEqual([])
+    expect(g.soldThisRound).toEqual({})
+    expect(g.operating).toEqual({ acted: [], issuedOrRedeemed: [] })
+    expect(g.players).toEqual(sample().players)
+    expect(g.track).toEqual(sample().track)
+  })
+
+  it('treats active companies as having operated and the rest as not (D6)', () => {
+    const g = importGame(file(), [])
+    expect(g.companies.express).toMatchObject({ status: 'active', operated: true, treasuryCash: 0, ledger: [] })
+    expect(g.companies.tunneling).toMatchObject({ status: 'unstarted', operated: false })
+  })
+
+  it('exports as version 2 and re-imports equal', () => {
+    const g = importGame(file(), [])
+    expect(importGame(exportGame(g), [])).toEqual(g)
   })
 })

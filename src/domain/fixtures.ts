@@ -38,3 +38,18 @@ export function put(
     track: game.track.map((q, i) => (i === index ? [...q, id] : q)),
   }
 }
+
+/** A game as the Phase 1 app saved it: schema version 1, without any Phase 2 field. */
+export function legacyV1Game(game: Game): Record<string, unknown> {
+  const companies = Object.fromEntries(
+    Object.entries(game.companies).map(([id, c]) => {
+      const { treasuryCash, operated, ledger, ...old } = c
+      void treasuryCash, operated, ledger
+      return [id, old]
+    }),
+  )
+  const { live, ...settings } = game.settings
+  void live
+  const { id, name, createdAt, players, track } = game
+  return { id, name, createdAt, schemaVersion: 1, settings, players, companies, track }
+}

@@ -4,11 +4,11 @@ import { MAX_COUNT } from '../domain/edit'
 import { newId } from '../domain/setup'
 import type { Game } from '../domain/types'
 
-export const SCHEMA_VERSION = 1
+export const SCHEMA_VERSION = 2 as const
 
 /** A game as stored. `undo[0]` is the most recent undo step. */
 export interface SavedGame {
-  schemaVersion: 1
+  schemaVersion: typeof SCHEMA_VERSION
   game: Game
   undo: Game[]
   redo: Game[]
@@ -27,11 +27,42 @@ const INDEX_KEY = 'lostAtlas.index'
 const CURRENT_KEY = 'lostAtlas.current'
 const gameKey = (id: string) => `lostAtlas.game.${id}`
 
+const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
+const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
+
 /**
  * Migration hook. MIGRATIONS[n] turns a version n game into a version n + 1 game.
- * Empty while the schema is at version 1.
  */
-const MIGRATIONS: Record<number, (game: unknown) => unknown> = {}
+const MIGRATIONS: Record<number, (game: unknown) => unknown> = {
+  1: migrateV1,
+}
+
+/**
+ * Version 1 to 2 (Phase 2). Adds treasury cash, the ledger, round state and the live flag.
+ * Phase 1 games stay manual (`live: false`). A company that is on the track is assumed to
+ * have operated already (decision D6), so its shares can be sold.
+ */
+function migrateV1(game: unknown): unknown {
+  if (!isObject(game)) return game
+  const companies = isObject(game.companies)
+    ? Object.fromEntries(
+        Object.entries(game.companies).map(([id, c]) => [
+          id,
+          isObject(c) ? { ...c, treasuryCash: 0, operated: c.status === 'active', ledger: [] } : c,
+        ]),
+      )
+    : game.companies
+  return {
+    ...game,
+    schemaVersion: 2,
+    settings: isObject(game.settings) ? { ...game.settings, live: false } : game.settings,
+    companies,
+    round: { cycle: 1, type: 'SR' },
+    cycleScores: [],
+    soldThisRound: {},
+    operating: { acted: [], issuedOrRedeemed: [] },
+  }
+}
 
 function migrate(schemaVersion: unknown, game: unknown): unknown {
   if (typeof schemaVersion !== 'number' || !Number.isInteger(schemaVersion) || schemaVersion < 1) {
@@ -51,8 +82,6 @@ const PHASES = ['yellow', 'green', 'purple']
 const VIEWS = ['track', 'ownership', 'scoreboard', 'dividend']
 const STATUSES = ['unavailable', 'unstarted', 'active', 'merged', 'closed']
 
-const isObject = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
-const isNumber = (v: unknown): v is number => typeof v === 'number' && Number.isFinite(v)
 /** A share count the views can draw: a whole number from 0 to MAX_COUNT. */
 const isCount = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0 && (v as number) <= MAX_COUNT
 
@@ -203,7 +232,7 @@ export function createSaves(storage: Storage = localStorage) {
       const sameVersion = data.schemaVersion === SCHEMA_VERSION
       const list = (v: unknown): Game[] =>
         sameVersion && Array.isArray(v) ? (v.filter((x) => checkGame(x) === null) as Game[]) : []
-      return { schemaVersion: 1, game: game as Game, undo: list(data.undo), redo: list(data.redo) }
+      return { schemaVersion: SCHEMA_VERSION, game: game as Game, undo: list(data.undo), redo: list(data.redo) }
     } catch {
       return null
     }
@@ -264,7 +293,7 @@ export function createSaves(storage: Storage = localStorage) {
     const source = read(id)
     if (!source) return null
     const game: Game = { ...source.game, id: newId(), name: `${source.game.name} copy`, createdAt: new Date().toISOString() }
-    return write({ schemaVersion: 1, game, undo: [], redo: [] }).ok ? game.id : null
+    return write({ schemaVersion: SCHEMA_VERSION, game, undo: [], redo: [] }).ok ? game.id : null
   }
 
   function rename(id: string, name: string) {
@@ -277,7 +306,7 @@ export function createSaves(storage: Storage = localStorage) {
   /** Imports an export file as a new saved game. Throws ImportError. */
   function importText(text: string): Game {
     const game = importGame(text, index.value.map((e) => e.id))
-    if (!write({ schemaVersion: 1, game, undo: [], redo: [] }).ok) {
+    if (!write({ schemaVersion: SCHEMA_VERSION, game, undo: [], redo: [] }).ok) {
       throw new ImportError('Storage is full. Delete a saved game and try again.')
     }
     return game
