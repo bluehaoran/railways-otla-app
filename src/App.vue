@@ -16,6 +16,7 @@ import SettingsDialog from './dialogs/SettingsDialog.vue'
 import SetupDialog from './dialogs/SetupDialog.vue'
 import StartCompanyDialog from './dialogs/StartCompanyDialog.vue'
 import { renameGame } from './domain/edit'
+import { gateHints } from './domain/gates'
 import { canMerge } from './domain/merge'
 import { actionsAllowed, advanceRound, isGameOver } from './domain/rounds'
 import { validate } from './domain/shares'
@@ -66,6 +67,7 @@ const exportStep = ref(false)
 const actions = computed(() => (game.value ? actionsAllowed(game.value) : null))
 const canStart = computed(() => actions.value?.startCompany ?? false)
 const canMergeNow = computed(() => mergeable.value && (actions.value?.merge ?? false))
+const hints = computed(() => (game.value ? gateHints(game.value) : { start: null, merge: null }))
 
 function nextRound() {
   const current = game.value
@@ -145,7 +147,8 @@ function removeSaved(id: string) {
       :can-redo="canRedo"
       :can-merge="canMergeNow"
       :can-start="canStart"
-      :live="game.settings.live"
+      :start-hint="hints.start"
+      :merge-hint="hints.merge"
       :badges="badges"
       @start="startOpen = true"
       @merge="mergeOpen = true"
@@ -163,8 +166,27 @@ function removeSaved(id: string) {
     </main>
 
     <footer class="bottom-actions">
-      <Button label="Start company" icon="pi pi-plus" class="primary" :disabled="!canStart" @click="startOpen = true" />
-      <Button label="Merge" icon="pi pi-share-alt" severity="secondary" outlined :disabled="!canMergeNow" @click="mergeOpen = true" />
+      <p v-if="hints.start || hints.merge" class="gate-hint small muted" data-testid="gate-hint">
+        <span v-if="hints.start" id="gate-hint-start">{{ hints.start }}</span>
+        <span v-if="hints.merge" id="gate-hint-merge">{{ hints.merge }}</span>
+      </p>
+      <Button
+        label="Start company"
+        icon="pi pi-plus"
+        class="primary"
+        :disabled="!canStart"
+        :aria-describedby="hints.start ? 'gate-hint-start' : undefined"
+        @click="startOpen = true"
+      />
+      <Button
+        label="Merge"
+        icon="pi pi-share-alt"
+        severity="secondary"
+        outlined
+        :disabled="!canMergeNow"
+        :aria-describedby="hints.merge ? 'gate-hint-merge' : undefined"
+        @click="mergeOpen = true"
+      />
     </footer>
 
     <div v-if="editMode" class="frame" aria-hidden="true" />
@@ -233,10 +255,17 @@ h1 {
   .bottom-actions {
     flex: none;
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
     background: var(--card);
     border-top: 1px solid var(--line);
+  }
+  .gate-hint {
+    flex: 0 0 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
   }
   .bottom-actions :deep(button) {
     min-height: 48px;

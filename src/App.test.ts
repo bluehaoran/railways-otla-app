@@ -207,7 +207,51 @@ describe('App in a live game', () => {
     const w = mount(App)
     await w.get('[data-testid="round-next"]').trigger('click')
     expect(useGame().game.value?.round.cycle).toBe(7)
-    expect(w.text()).not.toContain('Take the top train')
+    expect(w.text()).not.toContain('Export a train')
     expect(w.find('[data-testid="final-banner"]').exists()).toBe(true)
+  })
+
+  it('opens the phase dialog from the phase chip without the export reminder', async () => {
+    useGame().create(at('OR1'))
+    const w = mount(App)
+    await w.get('[data-testid="round-phase"]').trigger('click')
+    expect(w.text()).not.toContain('Export a train')
+    expect(w.text()).toContain('start price')
+  })
+
+  it('keeps the round when the phase is set from the reminder', async () => {
+    useGame().create(at('OR2'))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(w.text()).toContain('Export a train')
+    await button(w, 'Green').trigger('click')
+    const g = useGame().game.value!
+    expect(g.settings.phase).toBe('green')
+    expect(g.round).toEqual({ cycle: 2, type: 'SR' })
+  })
+
+  it('undoes the cycle rollover', async () => {
+    useGame().create(at('OR2'))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(useGame().game.value?.cycleScores).toHaveLength(1)
+    useGame().undo()
+    expect(useGame().game.value?.round).toEqual({ cycle: 1, type: 'OR2' })
+    expect(useGame().game.value?.cycleScores).toHaveLength(0)
+  })
+
+  it('shows a visible reason in the footer for a gated Start company', () => {
+    useGame().create(at('OR1'))
+    const w = mount(App)
+    const hint = w.get('[data-testid="gate-hint"]')
+    expect(hint.text()).toContain('Companies start in the Stock Round')
+    expect(w.get('footer button').attributes('aria-describedby')).toBe('gate-hint-start')
+  })
+
+  it('shows no footer hint, and enables Merge, in a manual game', () => {
+    useGame().create(sample())
+    const w = mount(App)
+    expect(w.find('[data-testid="gate-hint"]').exists()).toBe(false)
+    expect(w.get('[data-testid="merge"]').attributes('disabled')).toBeUndefined()
   })
 })

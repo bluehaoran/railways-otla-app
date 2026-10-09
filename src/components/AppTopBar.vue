@@ -14,7 +14,8 @@ const props = defineProps<{
   canRedo: boolean
   canMerge: boolean
   canStart: boolean
-  live: boolean
+  startHint: string | null
+  mergeHint: string | null
   badges: { ownership: number; scoreboard: number }
 }>()
 const view = defineModel<ViewId>('view', { required: true })
@@ -73,7 +74,7 @@ const items = [
         label="Start company"
         icon="pi pi-plus"
         :disabled="!canStart"
-        :title="live && !canStart ? 'Companies start in the Stock Round' : undefined"
+        :title="startHint ?? undefined"
         data-testid="start"
         @click="emit('start')"
       />
@@ -83,7 +84,7 @@ const items = [
         severity="secondary"
         outlined
         :disabled="!canMerge"
-        :title="live && !canMerge ? 'Mergers happen in the Merger Round, from the green phase' : undefined"
+        :title="mergeHint ?? undefined"
         data-testid="merge"
         @click="emit('merge')"
       />
