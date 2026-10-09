@@ -62,6 +62,7 @@ Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisa
 - `App.vue` is the only place that touches the store. Views and dialogs receive `game` as a prop and emit the next `Game` (`update`, `start`, `merge`); `App.vue` commits it. Keep new views and dialogs on this pattern so each action stays one undo step.
 - View state that is not part of the game (current view, edit mode, open dialogs) lives in `App.vue` refs and is not saved or undone.
 - The phone/tablet breakpoint is 720px (`max-width: 719px` in CSS, `useMediaQuery('(min-width: 720px)')` in `TrackView`).
+- Round tracking (live games only, `settings.live`): `RoundBar` shows under the top bar; its main button either opens `EndStockRoundDialog` (SR) or commits `advanceRound`. Leaving a cycle opens `PhaseDialog` with the Export a train reminder (`exportStep`). `actionsAllowed` gates Start company and Merge, and `gateHints` (`domain/gates.ts`) gives the reason each is disabled; `App.vue` shows it as the `gate-hint` line in the phone footer and links it with `aria-describedby`. `ScoreboardView` has a Now / By cycle switch (`CycleHistory`, rows from `cycleHistory` in `domain/history.ts`) and a final-ranking banner. The Setup dialog chooses `live` (default off). The fourth tab (Stock, Dividend) comes with the Stock Round and Operating Round plans.
 - `theme.ts` is the PrimeVue Aura preset (emerald primary, zinc surfaces). Light scheme only. Shared CSS variables are in `src/styles/app.css`.
 
 ## Tests

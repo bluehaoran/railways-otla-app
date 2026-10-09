@@ -69,7 +69,7 @@ Notes:
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
 | P2-01 | `schemaVersion` 2 and migration. Add `Company.treasuryCash` (default 0), `Company.operated` (default true for active companies), `Company.ledger` (empty), `Game.round`, `Game.cycleScores` (empty), `Game.soldThisRound` (empty). Phase 1 files import and export without loss. Done in Plan 1. Also adds `Game.operating { acted, issuedOrRedeemed }`. | B3, B7 | n/a | |
-| P2-02 | Live mode flag `settings.live`. Phase 2 automation (cash changes, rounds, ledger) runs only when on. Games created in Phase 1, and "final state entry" games, stay manual. See D1. Done in Plan 1 for the flag only (`settings.live`, `setLive`); the Setup toggle comes in a later plan. | New | No | P2-01 |
+| P2-02 | Live mode flag `settings.live`. Phase 2 automation (cash changes, rounds, ledger) runs only when on. Games created in Phase 1, and "final state entry" games, stay manual. See D1. Done in Plans 1 and 3 (flag and Setup toggle). | New | No | P2-01 |
 | P2-03 | Domain modules, pure and tested: `stock.ts` (sell plan, buy plan, validation), `dividend.ts` (payouts, price effect), `rounds.ts` (advance, Merger Round gating, end-of-Stock-Round bonus, snapshot), `treasury.ts` (ledger entries). Extend `validate()` with: negative treasury cash, bank pool above 50% after issue. Done in Plan 2. | A4, B4 | n/a | P2-01 |
 | P2-04 | Every Phase 2 action is one history entry (one `Game` assignment). Done in Plan 2. | B5 | n/a | P2-03 |
 
@@ -77,12 +77,12 @@ Notes:
 
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
-| P2-10 | Round state machine: cycle 1 to 4 or 6; SR, OR1, OR2, then MR only when the phase is green or later, then Export a train (reminder), then the next SR. Yellow phase skips the MR. If the phase turns green at Export a train, no MR that cycle. | A4, C10 | Yes (Rounds) | P2-01 |
-| P2-11 | Round bar in the shell on every view: cycle, round chips, progress text. | C10 | Partial (shown on StockTurn and Dividend only) | P2-10 |
-| P2-12 | Phase control (Yellow, Green, Purple). Drives the start price range and the MR gating. Manual change only. | C10 | Yes (Rounds) | P2-10 |
-| P2-13 | Contextual fourth tab and action gating: Start company only in SR; Merge only in MR and phase green or later. | C1, C10 | Partial (tab label for MR undefined, see D4) | P2-10 |
-| P2-14 | Cycle snapshot: store every player's total at cycle end. "Save snapshot now" button. Stored in `Game.cycleScores`, so undo rewinds it. | C6, C10 | Yes (ScoreboardHistory) | P2-10 |
-| P2-15 | End of game: after the last cycle, show the final ranking with the tie-break note. | A3 | No | P2-10 |
+| P2-10 | Round state machine: cycle 1 to 4 or 6; SR, OR1, OR2, then MR only when the phase is green or later, then Export a train (reminder), then the next SR. Yellow phase skips the MR. If the phase turns green at Export a train, no MR that cycle. Done in Plan 2 and 3. | A4, C10 | Yes (Rounds) | P2-01 |
+| P2-11 | Round bar in the shell on every view: cycle, round chips, progress text. Done in Plan 3. | C10 | Partial (shown on StockTurn and Dividend only) | P2-10 |
+| P2-12 | Phase control (Yellow, Green, Purple). Drives the start price range and the MR gating. Manual change only. Done in Plan 3 (Settings and the phase dialog). | C10 | Yes (Rounds) | P2-10 |
+| P2-13 | Contextual fourth tab and action gating: Start company only in SR; Merge only in MR and phase green or later. Gating done in Plan 3; the fourth tab comes with Plans 4 and 5. | C1, C10 | Partial (tab label for MR undefined, see D4) | P2-10 |
+| P2-14 | Cycle snapshot: store every player's total at cycle end. "Save snapshot now" button. Stored in `Game.cycleScores`, so undo rewinds it. Done in Plan 3. Cycle 1 shows no change: the starting cash is not stored. | C6, C10 | Yes (ScoreboardHistory) | P2-10 |
+| P2-15 | End of game: after the last cycle, show the final ranking with the tie-break note. Done in Plan 3. | A3 | No | P2-10 |
 
 ### C. Stock Round
 
@@ -94,7 +94,7 @@ Notes:
 | P2-23 | Buy rules: from the treasury (pays the company treasury) or the bank pool (pays the bank). Player holds at most 60%. Cannot buy a company sold in the same SR. Disable when cash is below the price. Domain done in Plan 2. | A4 | Partial (no insufficient-cash state) | P2-20 |
 | P2-24 | `soldThisRound`: record sold companies per player, clear at the start of each SR. Domain done in Plan 2. | B3 | n/a | P2-20 |
 | P2-25 | Start company with cash: same dialog as Phase 1 with a cash step. Bid leaves the president's cash and enters the company treasury. Bid maximum is the president's cash. Start as a turn type inside the Stock Round. Ledger entry. Domain done in Plan 2. | C7, C10 | Yes (StartCompanyP2); turn integration No | P2-20 |
-| P2-26 | End of Stock Round: "End Stock Round" action (the app does not count passes). Companies with no treasury and no bank pool shares rise 1 step and join the back of the new queue. Skip option. Several risers stack in turn order (D8). Domain done in Plan 2. | A4, C10 | Partial (dialog exists in Rounds, trigger button not designed) | P2-10 |
+| P2-26 | End of Stock Round: "End Stock Round" action (the app does not count passes). Companies with no treasury and no bank pool shares rise 1 step and join the back of the new queue. Skip option. Several risers stack in turn order (D8). Domain done in Plan 2. Done in Plan 3. | A4, C10 | Partial (dialog exists in Rounds, trigger button not designed) | P2-10 |
 | P2-27 | Sale or purchase that drops a price to 0 asks for confirmation, then closes the company. | A4 | No | P2-33 |
 
 ### D. Operating Round
@@ -121,7 +121,7 @@ Notes:
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
 | P2-50 | Combine treasury cash of A and B into M. Add a ledger entry. Set M `operated = true`. Domain done in Plan 2. | A4 | No (MergePreview shows no cash line) | P2-40 |
-| P2-51 | Gate the Merge button by round and phase (P2-13). Manual (non-live) games keep the Phase 1 behavior. | C1 | No | P2-02 |
+| P2-51 | Gate the Merge button by round and phase (P2-13). Manual (non-live) games keep the Phase 1 behavior. Done in Plan 3. | C1 | No | P2-02 |
 | P2-52 | Merger Round step in the round tracker: merge, or finish the round. | C10 | No | P2-10 |
 
 ### G. Edit mode additions
@@ -137,7 +137,7 @@ Primary device is a phone. All Phase 2 boards are tablet (1024 by 768) or dialog
 | Id | Item | Design |
 |---|---|---|
 | P2-70 | Phone layouts: StockTurn, Rounds, Dividend and DividendStates, ScoreboardHistory, Treasury, IssueRedeem, StartCompanyP2. | No |
-| P2-71 | Round bar on Track, Ownership and Scoreboard (tablet and phone). | No |
+| P2-71 | Round bar on Track, Ownership and Scoreboard (tablet and phone). Done in Plan 3 (the bar is in the shell; phone layout included). | No |
 
 ### I. Quick add share (F5)
 
@@ -180,6 +180,7 @@ Phase 2 gaps:
 - Ledger entry correction (P2-42).
 - Edit mode for Phase 2 data (P2-60).
 - Quick add share (P2-80), after D2.
+- Boards not in `docs/design/boards`: Rounds and ScoreboardHistory were built from spec C10; compare with the canvas.
 
 ## 5. Open decisions
 

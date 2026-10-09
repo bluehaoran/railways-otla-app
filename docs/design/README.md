@@ -40,9 +40,11 @@ Design source for the web app. Read this folder before building any screen.
   - Track, wide and phone: every token shows its overall turn number, 1..N across the whole track (highest price first, then queue order), including a token alone on a price.
   - Ownership, phone: the Key is collapsible, collapsed by default, toggle is an info icon, "Key" and a caret (down collapsed, up expanded), 44px tap target, `aria-expanded` and `aria-controls`. Wide screens always show it. The state is not remembered across sessions.
   - Ownership: the president marker in the Key is the same `ShareCircle` as in the table (crown above the letter, same size and gap). Do not restyle the circles from the Key's own CSS.
+- Phase 2 shell, built 2026-10-10 from spec C10 without the Rounds and ScoreboardHistory boards: round bar under the top bar (cycle, round chips, phase chip, main button), End Stock Round dialog with a skip checkbox per company, phase dialog doubling as the Export a train reminder, By cycle table on the Scoreboard.
 
 ## Open items
 - Second names unknown: Consortium, Union, Federation (Federation has no toggle on the board yet).
 - Enterprise is Experiment's second name.
 - Spec D4 item 8 is superseded: second identities are selectable in the merge wizard.
 - Phase 2, Ownership: a quick, low-tap way to add a share to a player (requested 2026-10-10, not built). Decide first: entry point (cell, player or company); one tap adds a share, or a picker; normal share only, or president card too; how a mistaken add is fixed (undo, or a remove control); whether it changes president, cash or scores automatically. Likely this is the Phase 2 buy transaction, so design it with that.
+- Rounds and ScoreboardHistory boards are not in this folder; reconcile the built screens with them.
