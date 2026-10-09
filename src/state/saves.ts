@@ -80,10 +80,21 @@ function migrate(schemaVersion: unknown, game: unknown): unknown {
 
 const PHASES = ['yellow', 'green', 'purple']
 const VIEWS = ['track', 'ownership', 'scoreboard', 'dividend']
+const ROUNDS = ['SR', 'OR1', 'OR2', 'MR']
 const STATUSES = ['unavailable', 'unstarted', 'active', 'merged', 'closed']
 
 /** A share count the views can draw: a whole number from 0 to MAX_COUNT. */
 const isCount = (v: unknown): v is number => Number.isInteger(v) && (v as number) >= 0 && (v as number) <= MAX_COUNT
+
+const isCompanyList = (v: unknown): boolean =>
+  Array.isArray(v) && v.every((id) => typeof id === 'string' && COMPANY_IDS.includes(id))
+const isLedgerEntry = (v: unknown): boolean =>
+  isObject(v) &&
+  Number.isInteger(v.cycle) &&
+  ROUNDS.includes(v.round as string) &&
+  typeof v.what === 'string' &&
+  isNumber(v.delta) &&
+  typeof v.auto === 'boolean'
 
 /** Checks the shape of a game. Returns the first missing or invalid field, or null. */
 export function checkGame(g: unknown): string | null {
@@ -94,6 +105,7 @@ export function checkGame(g: unknown): string | null {
   if (!isObject(settings) || typeof settings.shortGame !== 'boolean') return 'settings.shortGame'
   if (!PHASES.includes(settings.phase as string)) return 'settings.phase'
   if (!VIEWS.includes(settings.mainView as string)) return 'settings.mainView'
+  if (typeof settings.live !== 'boolean') return 'settings.live'
 
   const players = g.players
   if (!Array.isArray(players) || players.length < 2 || players.length > 5) return 'players'
@@ -113,7 +125,26 @@ export function checkGame(g: unknown): string | null {
     if (!isObject(c.holdings) || !Object.values(c.holdings).every(isCount)) return `companies.${id}`
     if (!Object.keys(c.holdings).every((holder) => playerIds.has(holder))) return `companies.${id}`
     if (!isCount(c.treasuryShares) || !isCount(c.marketShares)) return `companies.${id}`
+    if (!isNumber(c.treasuryCash)) return `companies.${id}.treasuryCash`
+    if (typeof c.operated !== 'boolean') return `companies.${id}.operated`
+    if (!Array.isArray(c.ledger) || !c.ledger.every(isLedgerEntry)) return `companies.${id}.ledger`
   }
+
+  const round = g.round
+  if (!isObject(round) || !Number.isInteger(round.cycle) || (round.cycle as number) < 1 || !ROUNDS.includes(round.type as string)) {
+    return 'round'
+  }
+  const cycleScores = g.cycleScores
+  if (!Array.isArray(cycleScores) || !cycleScores.every((s) => isObject(s) && Object.values(s).every(isNumber))) {
+    return 'cycleScores'
+  }
+  const sold = g.soldThisRound
+  if (!isObject(sold)) return 'soldThisRound'
+  for (const [holder, list] of Object.entries(sold)) {
+    if (!playerIds.has(holder) || !isCompanyList(list)) return 'soldThisRound'
+  }
+  const operating = g.operating
+  if (!isObject(operating) || !isCompanyList(operating.acted) || !isCompanyList(operating.issuedOrRedeemed)) return 'operating'
 
   const track = g.track
   if (!Array.isArray(track) || track.length !== 27) return 'track'

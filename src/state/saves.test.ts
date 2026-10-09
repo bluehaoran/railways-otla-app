@@ -85,6 +85,32 @@ describe('checkGame', () => {
     const offTrack = { ...base, track: base.track.map(() => []) }
     expect(checkGame(offTrack)).toBe('companies.express.status')
   })
+  describe('Phase 2 fields', () => {
+    const base = sample()
+    const withCompany = (patch: Record<string, unknown>) => ({
+      ...base,
+      companies: { ...base.companies, express: { ...base.companies.express, ...patch } },
+    })
+
+    it('accepts a good version 2 game', () => {
+      expect(checkGame(base)).toBeNull()
+    })
+
+    it.each([
+      ['settings.live', { ...base, settings: { ...base.settings, live: 'yes' } }],
+      ['round', { ...base, round: { cycle: 1, type: 'XX' } }],
+      ['round', { ...base, round: { cycle: 0, type: 'SR' } }],
+      ['cycleScores', { ...base, cycleScores: [{ p1: 'x' }] }],
+      ['soldThisRound', { ...base, soldThisRound: { p1: 'express' } }],
+      ['soldThisRound', { ...base, soldThisRound: { ghost: ['express'] } }],
+      ['operating', { ...base, operating: { acted: ['nope'], issuedOrRedeemed: [] } }],
+      ['companies.express.treasuryCash', withCompany({ treasuryCash: '40' })],
+      ['companies.express.operated', withCompany({ operated: 1 })],
+      ['companies.express.ledger', withCompany({ ledger: [{ cycle: 1, round: 'SR', what: 'x', auto: true }] })],
+    ])('rejects a bad %s', (path, game) => {
+      expect(checkGame(game)).toBe(path)
+    })
+  })
 })
 
 describe('saved games', () => {
