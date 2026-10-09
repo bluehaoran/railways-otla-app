@@ -68,6 +68,12 @@ export function nextToOperate(game: Game): CompanyId | null {
   return turnOrder(game).find((id) => !game.operating.acted.includes(id)) ?? null
 }
 
+/** Companies on the track, and how many of them have acted in this Operating Round. */
+export function operatedProgress(game: Game): { done: number; total: number } {
+  const onTrack = turnOrder(game)
+  return { done: onTrack.filter((id) => game.operating.acted.includes(id)).length, total: onTrack.length }
+}
+
 export interface Actions {
   stock: boolean
   startCompany: boolean

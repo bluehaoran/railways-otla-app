@@ -7,6 +7,7 @@ import {
   hasMergerRound,
   isGameOver,
   nextToOperate,
+  operatedProgress,
   saveSnapshot,
   stockRoundRisers,
 } from './rounds'
@@ -187,5 +188,19 @@ describe('actionsAllowed', () => {
   it('allows everything in a manual game (Phase 1 behavior, P2-93)', () => {
     const manual = { ...testGame(), settings: { ...testGame().settings, live: false } }
     expect(actionsAllowed(manual)).toEqual({ stock: true, startCompany: true, dividend: true, issueRedeem: true, merge: true })
+  })
+})
+
+describe('operatedProgress', () => {
+  const two = () => put(put(testGame(), 'express', { price: 80, president: J, treasury: 3 }), 'tunneling', { price: 70, president: K, treasury: 3 })
+
+  it('counts the companies on the track and those that have acted', () => {
+    expect(operatedProgress(two())).toEqual({ done: 0, total: 2 })
+    expect(operatedProgress({ ...two(), operating: { acted: ['express'], issuedOrRedeemed: [] } })).toEqual({ done: 1, total: 2 })
+  })
+
+  it('ignores a company that is no longer on the track', () => {
+    const g = { ...two(), operating: { acted: ['express', 'ghost'], issuedOrRedeemed: [] } }
+    expect(operatedProgress(g)).toEqual({ done: 1, total: 2 })
   })
 })
