@@ -46,6 +46,8 @@ Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisa
 - `companies.ts` builds the static catalogue from `src/data/companies.json`. Text ink per company colour comes from `contrast.ts`.
 - `blankCompany(id, status)` in `company.ts` is the one place a `Company` is built. Use it, never a hand-written literal, so new fields get defaults.
 - Phase 2 fields: `Company.treasuryCash`, `operated`, `ledger`; `Game.round`, `cycleScores`, `soldThisRound`, `operating` (`acted`, `issuedOrRedeemed`), `settings.live`. Treasury cash is never scored. A game with `settings.live = false` runs no Phase 2 automation.
+- Phase 2 rule modules (pure, live-mode only; the UI calls them, they do not check `settings.live`): `treasury.ts` (`addCash`, `manualEntry`, the ledger), `dividend.ts` (`dividendPlan`, `applyDividend`), `issue.ts` (`checkShareAction`, `issueShare`, `redeemShare`), `stock.ts` (`planTurn`, `applyTurn`: sell, then buy one share; presidency exchanges and closes are part of the turn), `rounds.ts` (`advanceRound`, `endStockRound`, `saveSnapshot`, `nextToOperate`, `actionsAllowed`). A plan function previews and returns `problems`; an apply function is one history entry.
+- `startCompany` and `applyMerge` run in both modes and touch treasury cash and the ledger only when `settings.live` is true. `closeCompany` also runs in both modes and resets the company to a blank closed one, which clears its treasury cash and ledger.
 - `fixtures.ts` has the test helpers `testGame()`, `put()` and `legacyV1Game()` (a game as the Phase 1 app saved it, for migration tests). App code does not import it.
 
 ### `src/state/`: store and persistence

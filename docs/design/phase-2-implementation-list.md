@@ -17,7 +17,7 @@ Precedence, highest first:
 Status columns:
 - Spec: rules and behavior are written in the spec.
 - Design: a board exists on the canvas. Yes, Partial or No.
-- Code: assumed No for every Phase 2 item, except items marked "Done in Plan 1" (Phase 2 Foundation, schema version 2). Phase 1 is assumed implemented as listed in spec D1. Confirm both assumptions.
+- Code: assumed No for every Phase 2 item, except items marked "Done in Plan 1" or "Done in Plan 2" (Phase 2 Foundation, schema version 2). Phase 1 is assumed implemented as listed in spec D1. Confirm both assumptions.
 
 Rulebook page references: Stock Round pp.10 to 11, Operating Round pp.12 to 17, Merger Round p.18, Export a train p.19.
 
@@ -70,8 +70,8 @@ Notes:
 |---|---|---|---|---|
 | P2-01 | `schemaVersion` 2 and migration. Add `Company.treasuryCash` (default 0), `Company.operated` (default true for active companies), `Company.ledger` (empty), `Game.round`, `Game.cycleScores` (empty), `Game.soldThisRound` (empty). Phase 1 files import and export without loss. Done in Plan 1. Also adds `Game.operating { acted, issuedOrRedeemed }`. | B3, B7 | n/a | |
 | P2-02 | Live mode flag `settings.live`. Phase 2 automation (cash changes, rounds, ledger) runs only when on. Games created in Phase 1, and "final state entry" games, stay manual. See D1. Done in Plan 1 for the flag only (`settings.live`, `setLive`); the Setup toggle comes in a later plan. | New | No | P2-01 |
-| P2-03 | Domain modules, pure and tested: `stock.ts` (sell plan, buy plan, validation), `dividend.ts` (payouts, price effect), `rounds.ts` (advance, Merger Round gating, end-of-Stock-Round bonus, snapshot), `treasury.ts` (ledger entries). Extend `validate()` with: negative treasury cash, bank pool above 50% after issue. | A4, B4 | n/a | P2-01 |
-| P2-04 | Every Phase 2 action is one history entry (one `Game` assignment). | B5 | n/a | P2-03 |
+| P2-03 | Domain modules, pure and tested: `stock.ts` (sell plan, buy plan, validation), `dividend.ts` (payouts, price effect), `rounds.ts` (advance, Merger Round gating, end-of-Stock-Round bonus, snapshot), `treasury.ts` (ledger entries). Extend `validate()` with: negative treasury cash, bank pool above 50% after issue. Done in Plan 2. | A4, B4 | n/a | P2-01 |
+| P2-04 | Every Phase 2 action is one history entry (one `Game` assignment). Done in Plan 2. | B5 | n/a | P2-03 |
 
 ### B. Rounds and shell
 
@@ -93,8 +93,8 @@ Notes:
 | P2-22 | Presidency change during a sale or purchase: when another player ends with more shares than the president, prompt the exchange (president card and 2 regular shares). Reuse Phase 1 `transferPresidency`. | A4 | No | P2-20 |
 | P2-23 | Buy rules: from the treasury (pays the company treasury) or the bank pool (pays the bank). Player holds at most 60%. Cannot buy a company sold in the same SR. Disable when cash is below the price. | A4 | Partial (no insufficient-cash state) | P2-20 |
 | P2-24 | `soldThisRound`: record sold companies per player, clear at the start of each SR. | B3 | n/a | P2-20 |
-| P2-25 | Start company with cash: same dialog as Phase 1 with a cash step. Bid leaves the president's cash and enters the company treasury. Bid maximum is the president's cash. Start as a turn type inside the Stock Round. Ledger entry. | C7, C10 | Yes (StartCompanyP2); turn integration No | P2-20 |
-| P2-26 | End of Stock Round: "End Stock Round" action (the app does not count passes). Companies with no treasury and no bank pool shares rise 1 step and join the back of the new queue. Skip option. | A4, C10 | Partial (dialog exists in Rounds, trigger button not designed) | P2-10 |
+| P2-25 | Start company with cash: same dialog as Phase 1 with a cash step. Bid leaves the president's cash and enters the company treasury. Bid maximum is the president's cash. Start as a turn type inside the Stock Round. Ledger entry. Domain done in Plan 2. | C7, C10 | Yes (StartCompanyP2); turn integration No | P2-20 |
+| P2-26 | End of Stock Round: "End Stock Round" action (the app does not count passes). Companies with no treasury and no bank pool shares rise 1 step and join the back of the new queue. Skip option. Several risers stack in turn order (D8). | A4, C10 | Partial (dialog exists in Rounds, trigger button not designed) | P2-10 |
 | P2-27 | Sale or purchase that drops a price to 0 asks for confirmation, then closes the company. | A4 | No | P2-33 |
 
 ### D. Operating Round
@@ -102,17 +102,17 @@ Notes:
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
 | P2-30 | OR company sequence in turn order. Each company is Waiting, Now or Done. A company that drops in price does not act again in the same OR. Store acted companies for the round in `Game.operating.acted`. | A4, C10 | Partial (Dividend shows one OR state) | P2-10 |
-| P2-31 | Dividend apply: Pay out, Withhold, No train. Pay out: minor shares pay 20% of E, major shares pay 10%, president card pays double, treasury shares pay the company treasury, bank pool shares pay nobody. Credit player cash. Price effect: 0 < E < P unchanged and token to the back; P <= E < 2P up 1; E >= 2P up 2; Withhold and No train down 1. Set `operated = true`. Ledger entries. One history entry. | A4, C10 | Yes (Dividend, DividendStates) | P2-30 |
-| P2-32 | Issue or redeem, once per company per OR, before the dividend. Issue: treasury share to bank pool, company receives the price, price down 1. Redeem: company pays the price to the bank, bank pool share to treasury, price unchanged. Warn when the pool would exceed 50% (see D3). | A4, C10 | Yes (IssueRedeem); entry point from the Dividend list No | P2-30 |
-| P2-33 | Price 0 closes the company from any cause. Confirm, set `closed`, clear shares, remove the token, treasury cash returns to the bank. | A4 | Yes (card 6 in DividendStates) | P2-31 |
-| P2-34 | Earnings input rules: allowed values and rounding of fractional payouts. The rulebook is silent. See D5. | A4 | No | P2-31 |
+| P2-31 | Dividend apply: Pay out, Withhold, No train. Pay out: minor shares pay 20% of E, major shares pay 10%, president card pays double, treasury shares pay the company treasury, bank pool shares pay nobody. Credit player cash. Price effect: 0 < E < P unchanged and token to the back; P <= E < 2P up 1; E >= 2P up 2; Withhold and No train down 1. Set `operated = true`. Ledger entries. One history entry. Domain done in Plan 2. A payout of 0 counts as No train (price drops 1). | A4, C10 | Yes (Dividend, DividendStates) | P2-30 |
+| P2-32 | Issue or redeem, once per company per OR, before the dividend. Issue: treasury share to bank pool, company receives the price, price down 1. Redeem: company pays the price to the bank, bank pool share to treasury, price unchanged. Warn when the pool would exceed 50% (see D3). Domain done in Plan 2. Issue needs a treasury share; issue and redeem together are one action per company per OR. | A4, C10 | Yes (IssueRedeem); entry point from the Dividend list No | P2-30 |
+| P2-33 | Price 0 closes the company from any cause. Confirm, set `closed`, clear shares, remove the token, treasury cash returns to the bank. Domain done in Plan 2. | A4 | Yes (card 6 in DividendStates) | P2-31 |
+| P2-34 | Earnings input rules: allowed values and rounding of fractional payouts. The rulebook is silent. See D5. A payout of 0 counts as No train (price drops 1). | A4 | No | P2-31 |
 
 ### E. Treasury cash
 
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
-| P2-40 | Treasury cash per company with a ledger and running balance. Automatic entries: start (bid in), treasury share bought (price in), issue (price in), redeem (price out), withhold (earnings in), treasury share payout (in), merge (combine). | A4, C10 | Yes (Treasury) | P2-01 |
-| P2-41 | Manual entries: Spend or Receive, reason (Train, Track tile, Hub token, Other), amount. | C10 | Yes (Treasury) | P2-40 |
+| P2-40 | Treasury cash per company with a ledger and running balance. Automatic entries: start (bid in), treasury share bought (price in), issue (price in), redeem (price out), withhold (earnings in), treasury share payout (in), merge (combine). Domain done in Plan 2. | A4, C10 | Yes (Treasury) | P2-01 |
+| P2-41 | Manual entries: Spend or Receive, reason (Train, Track tile, Hub token, Other), amount. Domain done in Plan 2. | C10 | Yes (Treasury) | P2-40 |
 | P2-42 | Ledger correction: edit or remove an entry (or use undo). | C10 | No | P2-40 |
 | P2-43 | Treasury cash is never scored. Keep it out of `playerTotal`. Done in Plan 1. | A4 | n/a | |
 
@@ -120,7 +120,7 @@ Notes:
 
 | Id | Item | Spec | Design | Depends on |
 |---|---|---|---|---|
-| P2-50 | Combine treasury cash of A and B into M. Add a ledger entry. Set M `operated = true`. | A4 | No (MergePreview shows no cash line) | P2-40 |
+| P2-50 | Combine treasury cash of A and B into M. Add a ledger entry. Set M `operated = true`. Domain done in Plan 2. | A4 | No (MergePreview shows no cash line) | P2-40 |
 | P2-51 | Gate the Merge button by round and phase (P2-13). Manual (non-live) games keep the Phase 1 behavior. | C1 | No | P2-02 |
 | P2-52 | Merger Round step in the round tracker: merge, or finish the round. | C10 | No | P2-10 |
 
@@ -149,11 +149,11 @@ Primary device is a phone. All Phase 2 boards are tablet (1024 by 768) or dialog
 
 | Id | Item |
 |---|---|
-| P2-90 | Spec D3 tests 15 to 20 (dividends, stock round, end of SR, issue and redeem, close, rounds). |
-| P2-91 | Presidency change during a sale and during a purchase. |
+| P2-90 | Spec D3 tests 15 to 20 (dividends, stock round, end of SR, issue and redeem, close, rounds). Done in Plan 2. |
+| P2-91 | Presidency change during a sale and during a purchase. Done in Plan 2. |
 | P2-92 | Migration: v1 file imports as v2 with defaults; v2 exports and re-imports equal; unknown version rejected. Done in Plan 1. |
-| P2-93 | Live flag off: no cash, ledger or round changes. |
-| P2-94 | Merge in live mode: treasury cash combines, ledger entry added. |
+| P2-93 | Live flag off: no cash, ledger or round changes. Done in Plan 2. |
+| P2-94 | Merge in live mode: treasury cash combines, ledger entry added. Done in Plan 2. |
 | P2-95 | Turn-order numbers (F2): unique, consecutive, update on move. |
 
 ## 4. Design backlog (not done)

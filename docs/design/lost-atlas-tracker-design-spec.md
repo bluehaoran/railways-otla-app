@@ -200,12 +200,14 @@ End of Stock Round: a company whose shares are all held by players (none in the 
 
 - Issue: one treasury share moves to the bank pool. The company receives the current share price from the bank. The price drops 1 step.
 - Redeem: the company pays the current share price to the bank and moves one bank pool share to its treasury. The price does not change.
+- A company issues or redeems at most one share per Operating Round, and issue needs a share in the treasury.
 
 #### Dividends
 
 Dividend entry for one company, in an Operating Round. Let `E` be the earnings and `P` the current price.
 
 Choice 1, Pay out:
+- A payout of 0 (a company that has a train but earns nothing) counts as No train: the price drops 1 (rulebook p.11, failure to generate revenue).
 - Each share receives `E * UNIT_PCT`. A president card receives twice that. Treasury shares pay to the company treasury. Market shares pay to the bank. Players' cash increases by their payout.
 - Price effect: `0 < E < P`: price unchanged, the token moves to the back of its queue. `P <= E < 2P`: up 1. `E >= 2P`: up 2.
 
@@ -519,7 +521,7 @@ Items found in the rulebook that Haoran did not discuss in the interview, with t
 3. Price 0 closes the company (A4).
 4. Presidency auto-transfer: the app warns and offers a one-click transfer instead of changing the president silently.
 5. End-of-Stock-Round bonus: confirmed (rulebook p.11). A company fully owned by players rises 1.
-6. Issue and redeem: confirmed (rulebook p.12). Issue: the company receives the share price and the price drops 1. Redeem: the company pays the share price to the bank, and the price does not change. The rulebook does not say whether issuing counts toward the 50% bank pool limit. The app warns and does not block.
+6. Issue and redeem: confirmed (rulebook p.12). Issue: the company receives the share price and the price drops 1. Redeem: the company pays the share price to the bank, and the price does not change. The rulebook words the 50% bank pool limit 'at any time' (p.10), so it applies to issue too. The app warns and does not block.
 7. Merge conversion rule, the tie-break details and the `needsChoice` fallback in A4 are this spec's reading of the rulebook where the text is silent.
 8. Resolved: the second identity of a major (System/Syndicate, International/Inc., Experiment/Enterprise) is selectable in the merge wizard. Second names for Consortium, Union and Federation are unknown (`null` in `company-colors.json`). The board shows "Name TBD" for Consortium and Union; Federation has no toggle yet.
 9. The players list order is clockwise seating order, used for the presidency tie rule.
