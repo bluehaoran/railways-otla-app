@@ -1,3 +1,4 @@
+import { blankCompany } from './company'
 import { COMPANIES, MAJOR_IDS } from './companies'
 import { turnOrder } from './scoring'
 import { shares } from './shares'
@@ -123,8 +124,7 @@ export function mergePlan(
 export function applyMerge(game: Game, plan: MergePlan): Game {
   if (plan.newPresident === null) throw new Error('Choose the new president first')
   const index = TRACK.indexOf(plan.price)
-  const retired = (id: CompanyId) =>
-    ({ id, status: 'merged', president: null, holdings: {}, treasuryShares: 0, marketShares: 0 }) as const
+  const retired = (id: CompanyId) => blankCompany(id, 'merged')
   return {
     ...game,
     companies: {
@@ -132,13 +132,13 @@ export function applyMerge(game: Game, plan: MergePlan): Game {
       [plan.aId]: retired(plan.aId),
       [plan.bId]: retired(plan.bId),
       [plan.mId]: {
-        id: plan.mId,
-        status: 'active',
+        ...blankCompany(plan.mId, 'active'),
         president: plan.newPresident,
         holdings: { ...plan.holdings },
         treasuryShares: plan.treasuryShares,
         marketShares: plan.marketShares,
         identity: plan.identity,
+        operated: true,
       },
     },
     track: game.track.map((queue, i) => {

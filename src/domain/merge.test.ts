@@ -111,6 +111,9 @@ describe('applyMerge', () => {
       treasuryShares: 2,
       marketShares: 1,
       identity: 0,
+      treasuryCash: 0,
+      operated: true,
+      ledger: [],
     })
     expect(merged.track[7]).toEqual(['suburban', 'union'])
     expect(priceOf(merged, 'tunneling')).toBeNull()
@@ -119,6 +122,14 @@ describe('applyMerge', () => {
     expect(merged.companies.express.holdings).toEqual({})
     expect(validate(merged)).toEqual([])
     expect(g.companies.union.status).toBe('unstarted')
+  })
+
+  it('marks the new major as operated and the retired minors as not', () => {
+    const g = test7()
+    const merged = applyMerge(g, mergePlan(g, 'tunneling', 'express', 'union'))
+    expect(merged.companies.union.operated).toBe(true)
+    expect(merged.companies.union.ledger).toEqual([])
+    expect(merged.companies.tunneling).toMatchObject({ status: 'merged', operated: false, treasuryCash: 0 })
   })
 
   it('stores the chosen name of the major', () => {

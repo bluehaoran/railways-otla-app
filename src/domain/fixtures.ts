@@ -28,6 +28,7 @@ export function put(
       [id]: {
         ...game.companies[id],
         status: 'active',
+        operated: true,
         president: o.president ?? null,
         holdings: o.holdings ?? {},
         treasuryShares: o.treasury ?? 0,

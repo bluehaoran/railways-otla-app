@@ -1,3 +1,4 @@
+import { blankCompany } from './company'
 import { COMPANY_IDS, SHORT_GAME_REMOVED } from './companies'
 import type { Company, Game, Phase } from './types'
 
@@ -20,28 +21,29 @@ export interface NewGameOptions {
   players: { name: string; code: string; cash: number }[]
   shortGame: boolean
   phase: Phase
+  live?: boolean
 }
 
 export function newGame(opts: NewGameOptions, id: string = newId(), createdAt: string = new Date().toISOString()): Game {
   const companies: Record<string, Company> = {}
   for (const companyId of COMPANY_IDS) {
-    companies[companyId] = {
-      id: companyId,
-      status: opts.shortGame && SHORT_GAME_REMOVED.includes(companyId) ? 'unavailable' : 'unstarted',
-      president: null,
-      holdings: {},
-      treasuryShares: 0,
-      marketShares: 0,
-    }
+    companies[companyId] = blankCompany(
+      companyId,
+      opts.shortGame && SHORT_GAME_REMOVED.includes(companyId) ? 'unavailable' : 'unstarted',
+    )
   }
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     id,
     name: opts.name,
     createdAt,
-    settings: { shortGame: opts.shortGame, phase: opts.phase, mainView: 'track' },
+    settings: { shortGame: opts.shortGame, phase: opts.phase, mainView: 'track', live: opts.live ?? true },
     players: opts.players.map((p, i) => ({ id: `p${i + 1}`, name: p.name, code: p.code, cash: p.cash })),
     companies,
     track: Array.from({ length: 27 }, () => []),
+    round: { cycle: 1, type: 'SR' },
+    cycleScores: [],
+    soldThisRound: {},
+    operating: { acted: [], issuedOrRedeemed: [] },
   }
 }

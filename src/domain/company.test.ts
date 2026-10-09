@@ -15,6 +15,9 @@ describe('startCompany', () => {
       holdings: {},
       treasuryShares: 3,
       marketShares: 0,
+      treasuryCash: 0,
+      operated: false,
+      ledger: [],
     })
     expect(g.track[8]).toEqual(['express'])
     expect(validate(g).filter((w) => w.companyId)).toEqual([])
@@ -66,6 +69,9 @@ describe('closeCompany', () => {
       holdings: {},
       treasuryShares: 0,
       marketShares: 0,
+      treasuryCash: 0,
+      operated: false,
+      ledger: [],
     })
     expect(closed.track[1]).toEqual(['tunneling'])
     expect(g.track[1]).toEqual(['express', 'tunneling'])

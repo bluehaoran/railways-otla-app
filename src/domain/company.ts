@@ -1,6 +1,11 @@
 import { COMPANIES } from './companies'
 import { TRACK } from './track'
-import type { CompanyId, Game, PlayerId } from './types'
+import type { Company, CompanyId, CompanyStatus, Game, PlayerId } from './types'
+
+/** A company with no owners, no cash and no history. */
+export function blankCompany(id: CompanyId, status: CompanyStatus): Company {
+  return { id, status, president: null, holdings: {}, treasuryShares: 0, marketShares: 0, treasuryCash: 0, operated: false, ledger: [] }
+}
 
 /**
  * Starts a minor: the president gets the president card (2 shares), the 3 regular
@@ -21,7 +26,7 @@ export function startCompany(game: Game, id: CompanyId, presidentId: PlayerId, p
     players: game.players.map((p) => (p.id === presidentId ? { ...p, cash: p.cash - bid } : p)),
     companies: {
       ...game.companies,
-      [id]: { id, status: 'active', president: presidentId, holdings: {}, treasuryShares: 3, marketShares: 0 },
+      [id]: { ...blankCompany(id, 'active'), president: presidentId, treasuryShares: 3 },
     },
     track: game.track.map((queue, i) => (i === index ? [...queue, id] : queue)),
   }
@@ -33,7 +38,7 @@ export function closeCompany(game: Game, id: CompanyId): Game {
     ...game,
     companies: {
       ...game.companies,
-      [id]: { id, status: 'closed', president: null, holdings: {}, treasuryShares: 0, marketShares: 0 },
+      [id]: blankCompany(id, 'closed'),
     },
     track: game.track.map((queue) => queue.filter((c) => c !== id)),
   }

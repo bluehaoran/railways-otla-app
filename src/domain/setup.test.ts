@@ -16,15 +16,30 @@ describe('setup', () => {
 
   it('creates an empty game with ids p1..pn and 27 empty queues', () => {
     const g = newGame({ name: 'Friday game', players: players(3), shortGame: false, phase: 'yellow' }, 'g1', '2026-10-05T00:00:00.000Z')
-    expect(g.schemaVersion).toBe(1)
+    expect(g.schemaVersion).toBe(2)
     expect(g.id).toBe('g1')
     expect(g.players.map((p) => p.id)).toEqual(['p1', 'p2', 'p3'])
     expect(g.players.map((p) => p.cash)).toEqual([300, 300, 300])
     expect(g.track).toHaveLength(27)
     expect(g.track.every((q) => q.length === 0)).toBe(true)
-    expect(g.settings).toEqual({ shortGame: false, phase: 'yellow', mainView: 'track' })
+    expect(g.settings).toEqual({ shortGame: false, phase: 'yellow', mainView: 'track', live: true })
     expect(Object.keys(g.companies)).toHaveLength(18)
     expect(Object.values(g.companies).every((c) => c.status === 'unstarted')).toBe(true)
+  })
+
+  it('starts a new game in the first Stock Round with empty Phase 2 state', () => {
+    const g = newGame({ name: 'A', players: players(2), shortGame: true, phase: 'yellow' })
+    expect(g.round).toEqual({ cycle: 1, type: 'SR' })
+    expect(g.cycleScores).toEqual([])
+    expect(g.soldThisRound).toEqual({})
+    expect(g.operating).toEqual({ acted: [], issuedOrRedeemed: [] })
+    const c = g.companies.express
+    expect([c.treasuryCash, c.operated, c.ledger]).toEqual([0, false, []])
+  })
+
+  it('can create a manual (not live) game', () => {
+    const g = newGame({ name: 'A', players: players(2), shortGame: true, phase: 'yellow', live: false })
+    expect(g.settings.live).toBe(false)
   })
 
   it('marks four minors unavailable in a Short Game and keeps all majors', () => {
