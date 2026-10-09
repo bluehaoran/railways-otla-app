@@ -15,6 +15,8 @@ Source documents: the rulebook PDF and `company-colors.json`. Where an interview
 
 Design files: see `README.md` and `boards/` in this folder. The boards supersede Part C where they differ.
 
+Precedence: `mobile-ux-feedback.md` overrides Part C where they differ. The Phase 2 work list is in `phase-2-implementation-list.md`, which also defines the Phase 1 and Phase 2 boundary.
+
 ---
 
 # Part A: Product and rules
@@ -125,7 +127,7 @@ Ranking: highest total wins. Tie-break: the player who is president of the compa
 | 4 | 275 | off (Long Game) |
 | 5 | 220 | off |
 
-Game length: 4 cycles (Short Game) or 6 cycles (Long Game). One cycle = Stock Round, Operating Round 1, Operating Round 2, Merger Round.
+Game length: 4 cycles (Short Game) or 6 cycles (Long Game). One cycle = Stock Round, Operating Round 1, Operating Round 2, Merger Round, then Export a train (physical step, reminder only). The Merger Round happens only after the first green train has been bought or exported (rulebook p.18). In the yellow phase the round tracker skips it. If the phase changes from yellow to green at the Export a train step, there is no Merger Round in that cycle.
 
 Note: this table supersedes the earlier "no default, the user must choose" for 3 and 4 players. Those games default to Long Game.
 
@@ -171,7 +173,35 @@ If a player other than the president holds strictly more shares than the preside
 - The market holds at most 50% (minor: 2 shares, major: 5 shares).
 - Shares across players, treasury and market must total 100%.
 
-### Phase 2 rules: dividends, sales
+### Phase 2 rules: stock round, dividends, issue and redeem
+
+Source: rulebook pp.10 to 12 and 15.
+
+#### Stock Round turn
+
+A turn is one of: start a minor company (auction), sell and/or buy, or pass. The round ends when all players pass in a row.
+
+Sell (any number of shares, once per turn, before buying):
+- Cash comes from the bank at the current price.
+- The price drops 1 step per company sold, regardless of how many shares of it were sold (a variant allows a drop per share: out of scope, see D4).
+- A player cannot sell a share that would leave a company without a president. In the app, the president card cannot be sold. If selling regular shares leaves another player with more shares than the president, the presidency moves (see Presidency changes).
+- A minor company's shares cannot be sold before that company has had its first Operating Round.
+- The bank pool (market) holds at most 50% of a company.
+
+Buy (at most one share per turn, after selling):
+- A share from the company treasury: the price is paid into that company's treasury.
+- A share from the bank pool: the price is paid to the bank.
+- No player holds more than 60% of a company.
+- A player cannot buy a company they sold in the same Stock Round.
+
+End of Stock Round: a company whose shares are all held by players (none in the treasury or the bank pool) rises 1 step. Tokens join the back of the new column.
+
+#### Operating Round, issue and redeem (step 2, once per company per Operating Round)
+
+- Issue: one treasury share moves to the bank pool. The company receives the current share price from the bank. The price drops 1 step.
+- Redeem: the company pays the current share price to the bank and moves one bank pool share to its treasury. The price does not change.
+
+#### Dividends
 
 Dividend entry for one company, in an Operating Round. Let `E` be the earnings and `P` the current price.
 
@@ -187,9 +217,13 @@ Choice 3, No train:
 
 Worked example (minor, E = 120): J holds the president card (40%) and receives 48. K holds 1 share (20%) and receives 24. The treasury holds 1 share and receives 24. The market holds 1 share and the bank pays 24. Total 120.
 
-Share sale by a player: price drops 1 for each sale action, regardless of the number of shares sold.
+Worked example from the rulebook: earnings 310, minor company, each share receives 62.
 
-Other rulebook price events (Phase 2, see D4): issuing a share drops price 1; at the end of each Stock Round, a company whose shares are all held by players (none in treasury or market) rises 1.
+Double jumps are possible: `E >= 2P` moves the price up 2 steps along the track.
+
+Price reaching 0 (sale, issue, withhold or no train): the company is dissolved. All shares leave the game, treasury cash returns to the bank, trains go to the bank pool, and hub tokens leave the map. The app confirms first.
+
+Company treasury cash is tracked in Phase 2 (not scored). It changes on: start (bid in), treasury share bought (price in), issue (price in), redeem (price out), withhold (earnings in), treasury share payout (in), merge (treasuries combine), and manual entries for train purchases, track costs, hub tokens and other spending.
 
 ## A5. Out of scope
 
@@ -250,7 +284,8 @@ interface Company {
   holdings: Record<PlayerId, number>    // regular cards only
   treasuryShares: number                // regular cards
   marketShares: number                  // regular cards
-  // Phase 2: treasuryCash: number
+  // Phase 2: treasuryCash: number; operated: boolean (minor has had its first Operating Round);
+  //          ledger: { cycle: number; round: 'SR'|'OR1'|'OR2'|'MR'; what: string; delta: number; auto: boolean }[]
 }
 
 interface Game {
@@ -262,7 +297,8 @@ interface Game {
   players: Player[]                     // order = clockwise seating
   companies: Record<CompanyId, Company>
   track: CompanyId[][]                  // length 27; track[i] is the queue at TRACK[i]; index 0 is the front
-  // Phase 2: round: { cycle: number; type: 'SR'|'OR1'|'OR2'|'MR' }, cycleScores: Record<PlayerId, number>[]
+  // Phase 2: round: { cycle: number; type: 'SR'|'OR1'|'OR2'|'MR' }, cycleScores: Record<PlayerId, number>[],
+  //          soldThisRound: Record<PlayerId, CompanyId[]>  (cleared at the start of each Stock Round)
 }
 ```
 
@@ -346,7 +382,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 ## C4. Track view
 
 - Horizontal grid of track positions, colored by zone (A4). Cropped to the occupied positions plus one position each side. A "show full track" toggle shows all 27.
-- Track direction (changed 2026-10-06): lowest price on the left, highest on the right, so turn order reads right to left. On a phone the highest price is on top.
+- Turn order: highest price on the left (top on phone).
 - Each position shows its queue as a vertical stack, front on top. Each token is a company chip (abbreviation, company color) with its president's code.
 - Non-edit mode: select a token to show a bottom dock with up and down buttons that move it one increment (`moveToken`).
 - Edit mode: drag tokens to any position and any queue slot (`useSortable`). Also provide a per-token menu: "Move to price...", "Move to front", "Move to back", for touch and keyboard users.
@@ -370,7 +406,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 
 - Choose an unstarted minor. Choose the president (player). Enter the winning bid (multiples of 5, minimum 120), or choose the starting price directly on the track.
 - Shows the resulting price using `startPrice(bid, phase)`.
-- The winning bid is deducted from the president's cash, in Phase 1 too (decided 2026-10-06). Phase 2 also adds it to the company treasury, which Phase 1 does not track.
+- Phase 1 does not change cash (cash is manual in Phase 1). Phase 2 deducts the bid from the president's cash and adds it to the company treasury.
 - The dialog gives the president card to the chosen player and puts the 3 regular cards in the company treasury.
 
 ## C8. Merge wizard
@@ -383,7 +419,7 @@ When edit mode is on, the following become editable: cash, share counts (players
 ## C9. Design handoff notes
 
 See `README.md` and `boards/` for the delivered design. Decisions made:
-- Track direction (changed 2026-10-06): lowest price on the left, highest on the right, so turn order reads right to left. On a phone the highest price is on top.
+- Turn order: highest price on the left (top on phone).
 - Edit mode: amber banner, 4px frame, filled pencil.
 - Crown above the letter so all share circles are the same size.
 - Constraints: PrimeVue components and Aura tokens, touch targets at least 44 px, readable at arm's length on a shared table, all information carried by more than color alone.
@@ -400,17 +436,37 @@ See `README.md` and `boards/` for the delivered design. Decisions made:
   - "Earnings withheld. Price drops 1 step."
   - "No train. Earnings count as 0. Price drops 1 step."
 
-### Round tracking and history
+Boards: `Dividend` (pay out, Express), `DividendStates` (all five outcomes plus price 0).
 
-- Round indicator: cycle number (of 4 or 6), and round type (SR, OR1, OR2, MR).
-- Scoreboard snapshot at the end of each full cycle (after the MR). Extended mode shows one column per cycle.
+The fourth view tab is contextual: "Stock" during a Stock Round, "Dividend" during an Operating Round.
 
-### Transactions
+### Stock Round turn
 
-- Buy: player pays the current price to the company treasury or to the bank. Maximum one buy per turn. Sell: any number of shares, one price drop per sale action. Enforce the 60% and 50% limits and block selling the president card.
+Board: `StockTurn`. Choose the player on turn. Section 1 sells (stepper per company, president card locked, price drop and cash preview). Section 2 buys one share (radio list, source toggle Treasury or Bank pool, disabled rows state the reason: nothing for sale, sold this round, 60% limit). A summary bar shows cash before and after, and which physical tokens to move. Confirm applies the turn as one undoable step.
+
+### Round tracking
+
+Board: `Rounds`. Round indicator: cycle number (of 4 or 6), and round type (SR, OR1, OR2, MR). The MR is skipped in the yellow phase. Export a train is a reminder. A phase selector (Yellow, Green, Purple) sets the start price range and turns the Merger Round on. End of Stock Round dialog lists companies fully owned by players and applies the +1 step bonus.
+
+### History
+
+Board: `ScoreboardHistory`. Scoreboard view has a "Now / By cycle" switch. By cycle shows one column per cycle with total, rank, and change since the previous cycle. A snapshot is saved when a cycle ends (and on demand). Cycle 1 compares with starting cash.
+
+### Treasury cash
+
+Board: `Treasury`. Ownership view has a "Shares / Treasury cash" switch. Table: cash, treasury shares, bank pool shares per company. Ledger per company with running balance. Automatic entries come from the app. Manual entries (Spend or Receive, reason, amount) record train purchases, track costs and hub tokens. Company cash is not scored.
+
+### Company actions
+
+- `IssueRedeem` (dialog): issue or redeem one share. Shows before and after for cash, treasury shares, bank pool, and price. Redeem is disabled when the bank pool is empty.
+- `StartCompanyP2` (dialog): start company with cash. The winning bid leaves the president's cash and enters the company treasury. The bid maximum is the president's cash.
+
+### Transactions summary
+
+- Buy and sell: see Stock Round turn.
 - Start company: as C7, with the cash changes.
-- Issue and redeem shares (see D4).
-- Company treasuries (cash) are tracked in Phase 2.
+- Issue and redeem: see above.
+- Company treasuries (cash): tracked as above.
 
 ---
 
@@ -426,7 +482,7 @@ Not in Phase 1: Dividend view, buy and sell transactions, treasury cash, round t
 
 Dividend view with automatic cash credit, buy and sell transactions, start company with cash, treasury cash, issue and redeem, end-of-Stock-Round bonus, round tracking, scoreboard history per cycle.
 
-Also in Phase 2: a quick way to add a share to a player from the Ownership view (mobile feedback item 5, 2026-10-10). Its open questions are in `docs/design/README.md`. Build it with the buy transaction rather than as a separate edit.
+Also in Phase 2: a quick way to add a share to a player from the Ownership view (mobile feedback item 5, 2026-10-10). Its open questions are in `phase-2-implementation-list.md` (D2, P2-80). Build it with the buy transaction rather than as a separate edit.
 
 ## D3. Acceptance tests (Vitest fixtures)
 
@@ -444,7 +500,12 @@ Also in Phase 2: a quick way to add a share to a player from the Ownership view 
 12. Setup: 2 players default Short. 3, 4 and 5 players default Long. Starting cash 450, 300, 275, 220.
 13. History: undo after a merge restores both minors, the major as unstarted, and all holdings. Redo reapplies.
 14. Save: export then import returns an equal game. Import with an unknown `schemaVersion` is rejected.
-15. Phase 2: dividend example in A4 (E = 120) gives J 48, K 24, treasury 24, bank 24. Cases: `E=30, P=80` unchanged and back of queue. `E=80, P=80` up 1. `E=160, P=80` up 2. Withhold drops 1. No train drops 1.
+15. Phase 2 dividends: dividend example in A4 (E = 120) gives J 48, K 24, treasury 24, bank 24. Cases: `E=30, P=80` unchanged and back of queue. `E=80, P=80` up 1. `E=160, P=80` up 2. Withhold drops 1. No train drops 1. Rulebook example: `E=310`, minor, each share 62.
+16. Phase 2 stock round: selling shares of two companies drops each price 1 step. Selling 2 shares of one company drops it 1 step. The president card cannot be sold. A minor with `operated = false` cannot be sold. After selling a company, buying it is rejected. A fourth share of a minor is rejected (60%). A third bank pool share of a minor is rejected on sale (50%).
+17. Phase 2 end of Stock Round: a company with no treasury or bank pool shares rises 1 step and joins the back of the queue. Others do not move.
+18. Phase 2 issue and redeem: issue from price 110 gives +110 treasury cash, treasury shares minus 1, bank pool plus 1, price 100. Redeem at price 110 with a bank pool share gives treasury cash minus 110, bank pool minus 1, treasury shares plus 1, price 110. Redeem with an empty bank pool is rejected.
+19. Phase 2 close: withhold at price 10 gives price 0 and dissolves the company after confirmation. Treasury cash goes to the bank.
+20. Phase 2 rounds: Merger Round is skipped while phase is yellow. After Export a train, the cycle counter advances. The cycle snapshot stores each player's total.
 
 ## D4. Assumptions and open items (confirm or correct at review)
 
@@ -454,12 +515,19 @@ Items found in the rulebook that Haoran did not discuss in the interview, with t
 2. No train: the rulebook says a company with no train earns 0 and its price drops 1. This replaces an earlier assumption that E = 0 changes nothing.
 3. Price 0 closes the company (A4).
 4. Presidency auto-transfer: the app warns and offers a one-click transfer instead of changing the president silently.
-5. End-of-Stock-Round bonus: a company fully owned by players rises 1 (Phase 2).
-6. Issue and redeem: issuing a share drops price 1 and gives the treasury the share's value. Redeem details to be checked against rulebook page 17 before Phase 2.
+5. End-of-Stock-Round bonus: confirmed (rulebook p.11). A company fully owned by players rises 1.
+6. Issue and redeem: confirmed (rulebook p.12). Issue: the company receives the share price and the price drops 1. Redeem: the company pays the share price to the bank, and the price does not change. The rulebook does not say whether issuing counts toward the 50% bank pool limit. The app warns and does not block.
 7. Merge conversion rule, the tie-break details and the `needsChoice` fallback in A4 are this spec's reading of the rulebook where the text is silent.
 8. Resolved: the second identity of a major (System/Syndicate, International/Inc., Experiment/Enterprise) is selectable in the merge wizard. Second names for Consortium, Union and Federation are unknown (`null` in `company-colors.json`). The board shows "Name TBD" for Consortium and Union; Federation has no toggle yet.
 9. The players list order is clockwise seating order, used for the presidency tie rule.
-10. Resolved 2026-10-06: the start-company dialog deducts the winning bid from the president's cash in Phase 1. Other cash changes stay manual in Phase 1.
+10. Phase 1 start-company dialog does not change cash. Cash is manual in Phase 1.
 11. At the top of the track (500), a token that moves up stays at 500 and goes to the back of the queue.
 12. The undo history is saved with the game (capped at 200 steps).
 13. Refinement of the approved design: price and queue position are stored once, as the token's place in `track`, instead of as separate company fields.
+14. Merger Round only from the green phase (rulebook p.18). The round tracker skips it in the yellow phase.
+15. Stock Round limits (rulebook pp.10 and 11): one sale action then one purchase per turn. A minor cannot be sold before its first Operating Round. A company sold this Stock Round cannot be bought by the same player. The app enforces these as disabled options with a reason.
+16. The variant "stock drops per share sold" (rulebook p.4) is not supported. The app drops the price once per company sold.
+17. The Minor Company matrix (only the bottom row of each column can be launched, rulebook p.7) is not enforced. The app lets the user pick any unstarted minor.
+18. The priority player marker is not tracked.
+19. Forced train purchase and bankruptcy (rulebook p.17) are not modelled. Use edit mode and manual treasury entries.
+20. Treasury cash from a merge is the sum of both companies. Trains are not tracked.
