@@ -426,6 +426,8 @@ Not in Phase 1: Dividend view, buy and sell transactions, treasury cash, round t
 
 Dividend view with automatic cash credit, buy and sell transactions, start company with cash, treasury cash, issue and redeem, end-of-Stock-Round bonus, round tracking, scoreboard history per cycle.
 
+Also in Phase 2: a quick way to add a share to a player from the Ownership view (mobile feedback item 5, 2026-10-10). Its open questions are in `docs/design/README.md`. Build it with the buy transaction rather than as a separate edit.
+
 ## D3. Acceptance tests (Vitest fixtures)
 
 1. Track: `TRACK.length === 27`. `snapDown(87.5) === 80`. `snapDown(137) === 135`. `snapDown(9) === 0`.

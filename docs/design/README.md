@@ -35,8 +35,14 @@ Design source for the web app. Read this folder before building any screen.
 - New game: Short/Long segmented control. Defaults to Long for 3 to 4 players.
 - Edit mode: amber banner, 4px frame, filled pencil.
 - Merge step 2: six major cards. A toggle switches the name only; abbreviation and colour stay fixed.
+- Mobile feedback, built 2026-10-10. These supersede the boards; keep them when Phase 2 changes the screens:
+  - New game, phone: Name takes the remaining row width (`flex: 1; min-width: 0`). Code is 2 characters wide (`maxlength` 2 on phone, 6 on wide). Starting cash is 3 digits wide, numeric, `maxlength` 3, header reads "Cash". Trash button is 2rem square.
+  - Track, wide and phone: every token shows its overall turn number, 1..N across the whole track (highest price first, then queue order), including a token alone on a price.
+  - Ownership, phone: the Key is collapsible, collapsed by default, toggle is an info icon, "Key" and a caret (down collapsed, up expanded), 44px tap target, `aria-expanded` and `aria-controls`. Wide screens always show it. The state is not remembered across sessions.
+  - Ownership: the president marker in the Key is the same `ShareCircle` as in the table (crown above the letter, same size and gap). Do not restyle the circles from the Key's own CSS.
 
 ## Open items
 - Second names unknown: Consortium, Union, Federation (Federation has no toggle on the board yet).
 - Enterprise is Experiment's second name.
 - Spec D4 item 8 is superseded: second identities are selectable in the merge wizard.
+- Phase 2, Ownership: a quick, low-tap way to add a share to a player (requested 2026-10-10, not built). Decide first: entry point (cell, player or company); one tap adds a share, or a picker; normal share only, or president card too; how a mistaken add is fixed (undo, or a remove control); whether it changes president, cash or scores automatically. Likely this is the Phase 2 buy transaction, so design it with that.
