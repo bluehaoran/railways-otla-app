@@ -36,7 +36,7 @@ Three layers, with dependencies pointing one way: UI → state → domain.
 
 ### `src/domain/`: the rules
 
-Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisable object that holds everything. Every rule function takes a `Game` and returns a new `Game` (spread copies, never mutation).
+Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisable object that holds everything (schema version 2). Every rule function takes a `Game` and returns a new `Game` (spread copies, never mutation).
 
 - `Company.holdings` counts regular cards only. The president card is `Company.president` and counts as 2 shares. Always go through `shares()` in `shares.ts` instead of reading `holdings` directly.
 - `Game.track` is 27 queues, one per entry in `TRACK` (`track.ts`). `track[i][0]` is the front of the queue. Index 0 is price 0, which means closed: a token never rests there, so `placeToken`/`moveToken` return `{ kind: 'close' }` for the caller to confirm instead of moving it.
@@ -44,12 +44,14 @@ Pure TypeScript, no Vue imports. `types.ts` defines `Game`, the single serialisa
 - `validate()` in `shares.ts` returns rule warnings. Warnings never block an action; the UI shows them as badges.
 - `edit.ts` holds the direct setters for edit mode. They accept any value and skip the rules on purpose (`setPresident` exchanges no cards; `transferPresidency` is the rule version).
 - `companies.ts` builds the static catalogue from `src/data/companies.json`. Text ink per company colour comes from `contrast.ts`.
+- `blankCompany(id, status)` in `company.ts` is the one place a `Company` is built. Use it, never a hand-written literal, so new fields get defaults.
+- Phase 2 fields: `Company.treasuryCash`, `operated`, `ledger`; `Game.round`, `cycleScores`, `soldThisRound`, `operating` (`acted`, `issuedOrRedeemed`), `settings.live`. Treasury cash is never scored. A game with `settings.live = false` runs no Phase 2 automation.
 - `fixtures.ts` has the test helpers `testGame()` and `put()`. App code does not import it.
 
 ### `src/state/`: store and persistence
 
 - `game.ts`: `createGameStore(saves)` owns the current game in one `ref<Game | null>`. Every change goes through `commit(next)`, which assigns a whole new `Game`, so one user action is one undo step. Undo history is `useRefHistory` with `flush: 'sync'`. A sync watcher registered after it autosaves the game with its undo and redo stacks. The order of those two registrations matters.
-- `saves.ts`: `createSaves(storage)` handles the `lostAtlas.*` keys (index, current id, one key per game), export and import, `checkGame` shape validation, and the `MIGRATIONS` hook keyed by `schemaVersion`. A change to the `Game` shape needs a schema version bump, a migration, and a matching update to `checkGame`.
+- `saves.ts`: `createSaves(storage)` handles the `lostAtlas.*` keys (index, current id, one key per game), export and import, `checkGame` shape validation, and the `MIGRATIONS` table (`1` is the Phase 2 step; v1 undo history is dropped on open). A change to the `Game` shape needs a schema version bump, a migration, and a matching update to `checkGame`.
 - `write()` handles a full quota by dropping other games' histories, then halving this game's undo stack. The store mirrors the trim through the returned `kept` count.
 - `useGame()` and `useSaves()` are the app singletons. `useGame()` also listens for the `storage` event so two tabs do not overwrite each other. Tests call the `create*` factories with `memoryStorage()` instead.
 
