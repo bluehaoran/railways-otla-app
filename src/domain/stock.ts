@@ -1,8 +1,9 @@
 import { displayName, kindOf } from './companies'
 import { closeCompany } from './company'
 import { presidencyCandidate, transferPresidency } from './presidency'
-import { MARKET_LIMIT } from './shares'
+import { MARKET_LIMIT, PLAYER_LIMIT, shares } from './shares'
 import { moveToken, priceOf } from './track'
+import { addCash } from './treasury'
 import type { CompanyId, Game, PlayerId } from './types'
 
 export type BuySource = 'treasury' | 'market'
@@ -58,6 +59,7 @@ export function planTurn(game: Game, turn: StockTurn): TurnPlan {
   let cash = player.cash
   const sold: CompanyId[] = []
   const closing: CompanyId[] = []
+  let bought: CompanyId | null = null
 
   for (const [companyId, count] of Object.entries(turn.sells)) {
     if (count === 0) continue
@@ -97,6 +99,44 @@ export function planTurn(game: Game, turn: StockTurn): TurnPlan {
     }
   }
 
+  if (turn.buy) {
+    const { companyId, source } = turn.buy
+    const company = g.companies[companyId]
+    if (!company || company.status !== 'active' || priceOf(g, companyId) === null) {
+      problem('not-active', companyId, `${companyId} is not in play`)
+    } else {
+      const name = displayName(company)
+      const kind = kindOf(companyId)
+      const price = priceOf(g, companyId) as number
+      const soldEarlier = (game.soldThisRound[turn.playerId] ?? []).includes(companyId)
+      if (sold.includes(companyId) || closing.includes(companyId) || soldEarlier) {
+        problem('sold-this-round', companyId, `${name}: ${player.code} sold it this Stock Round`)
+      } else if ((source === 'treasury' ? company.treasuryShares : company.marketShares) < 1) {
+        problem('nothing-to-buy', companyId, `${name}: no share in the ${source === 'treasury' ? 'treasury' : 'bank pool'}`)
+      } else if (shares(company, turn.playerId) + 1 > PLAYER_LIMIT[kind]) {
+        problem('player-limit', companyId, `${name}: ${player.code} would hold more than 60%`)
+      } else if (cash < price) {
+        problem('no-cash', companyId, `${name}: ${player.code} has ${cash}, the price is ${price}`)
+      } else {
+        cash -= price
+        g = {
+          ...g,
+          companies: {
+            ...g.companies,
+            [companyId]: {
+              ...company,
+              holdings: { ...company.holdings, [turn.playerId]: (company.holdings[turn.playerId] ?? 0) + 1 },
+              treasuryShares: company.treasuryShares - (source === 'treasury' ? 1 : 0),
+              marketShares: company.marketShares - (source === 'market' ? 1 : 0),
+            },
+          },
+        }
+        if (source === 'treasury') g = addCash(g, companyId, price, `Share bought: ${name}`)
+        bought = companyId
+      }
+    }
+  }
+
   if (problems.length > 0) {
     return { problems, game, cashBefore: player.cash, cashAfter: player.cash, sold: [], closes: [], presidency: [] }
   }
@@ -114,7 +154,8 @@ export function planTurn(game: Game, turn: StockTurn): TurnPlan {
   }
 
   const presidency: TurnPlan['presidency'] = []
-  for (const companyId of sold) {
+  const touched = bought === null ? sold : [...sold, bought]
+  for (const companyId of touched) {
     if (closing.includes(companyId)) continue
     const to = presidencyCandidate(g, companyId)
     const from = g.companies[companyId].president

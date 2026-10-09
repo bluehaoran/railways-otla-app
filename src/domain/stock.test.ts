@@ -115,3 +115,86 @@ describe('selling (spec D3 test 16)', () => {
     expect(next.companies.federation.holdings).toEqual({ [J]: 3, [K]: 2 })
   })
 })
+
+describe('buying (spec D3 test 16)', () => {
+  it('buys from the treasury: the price goes to the company treasury with a ledger entry', () => {
+    const turn = { playerId: K, sells: {}, buy: { companyId: 'tunneling', source: 'treasury' as const } }
+    const next = applyTurn(base(), turn)
+    expect(next.players.find((p) => p.id === K)?.cash).toBe(430)
+    expect(next.companies.tunneling.holdings[K]).toBe(2)
+    expect(next.companies.tunneling.treasuryShares).toBe(1)
+    expect(next.companies.tunneling.treasuryCash).toBe(70)
+    expect(next.companies.tunneling.ledger).toHaveLength(1)
+  })
+
+  it('buys from the bank pool: the price goes to the bank, not to a treasury', () => {
+    let g = put(testGame(), 'express', { price: 80, president: J, holdings: { [K]: 1 }, treasury: 1, market: 1 })
+    g = setCash(g, K, 100)
+    const next = applyTurn(g, { playerId: K, sells: {}, buy: { companyId: 'express', source: 'market' } })
+    expect(next.players.find((p) => p.id === K)?.cash).toBe(20)
+    expect(next.companies.express.marketShares).toBe(0)
+    expect(next.companies.express.treasuryCash).toBe(0)
+    expect(next.companies.express.ledger).toEqual([])
+  })
+
+  it('refuses a source with nothing in it', () => {
+    const plan = planTurn(base(), { playerId: K, sells: {}, buy: { companyId: 'express', source: 'market' } })
+    expect(plan.problems.map((p) => p.code)).toEqual(['nothing-to-buy'])
+  })
+
+  it('refuses a fourth share of a minor (60% limit)', () => {
+    const g = setCash(put(testGame(), 'express', { price: 80, president: null, holdings: { [K]: 3 }, treasury: 1, market: 1 }), K, 500)
+    const plan = planTurn(g, { playerId: K, sells: {}, buy: { companyId: 'express', source: 'treasury' } })
+    expect(plan.problems.map((p) => p.code)).toEqual(['player-limit'])
+  })
+
+  it('refuses a company sold in the same turn', () => {
+    const plan = planTurn(base(), {
+      playerId: K,
+      sells: { express: 1 },
+      buy: { companyId: 'express', source: 'treasury' },
+    })
+    expect(plan.problems.map((p) => p.code)).toEqual(['sold-this-round'])
+  })
+
+  it('refuses a company sold in an earlier turn of this Stock Round', () => {
+    const g = { ...base(), soldThisRound: { [K]: ['express'] } }
+    const plan = planTurn(g, { playerId: K, sells: {}, buy: { companyId: 'express', source: 'treasury' } })
+    expect(plan.problems.map((p) => p.code)).toEqual(['sold-this-round'])
+  })
+
+  it('refuses when the player cannot pay', () => {
+    const g = setCash(base(), K, 50)
+    const plan = planTurn(g, { playerId: K, sells: {}, buy: { companyId: 'tunneling', source: 'treasury' } })
+    expect(plan.problems.map((p) => p.code)).toEqual(['no-cash'])
+  })
+
+  it('lets the cash from this turn’s sale pay for the purchase', () => {
+    const g = setCash(base(), K, 50)
+    const next = applyTurn(g, { playerId: K, sells: { express: 1 }, buy: { companyId: 'tunneling', source: 'treasury' } })
+    expect(next.players.find((p) => p.id === K)?.cash).toBe(60)
+    expect(next.soldThisRound).toEqual({ [K]: ['express'] })
+  })
+
+  it('moves the presidency when a purchase leaves another player with more shares (P2-91)', () => {
+    const g = setCash(
+      put(testGame(), 'federation', { price: 100, president: J, holdings: { [J]: 2, [K]: 4 }, treasury: 1, market: 1 }),
+      K,
+      500,
+    )
+    const turn = { playerId: K, sells: {}, buy: { companyId: 'federation', source: 'treasury' as const } }
+    const plan = planTurn(g, turn)
+    expect(plan.presidency).toEqual([{ companyId: 'federation', from: J, to: K }])
+    const next = applyTurn(g, turn)
+    expect(next.companies.federation.president).toBe(K)
+    expect(next.companies.federation.holdings).toEqual({ [J]: 4, [K]: 3 })
+    expect(next.players.find((p) => p.id === K)?.cash).toBe(400)
+  })
+
+  it('does not apply a sale when the purchase has a problem (review focus 1)', () => {
+    const g = base()
+    const turn = { playerId: K, sells: { express: 1 }, buy: { companyId: 'express', source: 'treasury' as const } }
+    expect(planTurn(g, turn).game).toBe(g)
+    expect(() => applyTurn(g, turn)).toThrow()
+  })
+})
