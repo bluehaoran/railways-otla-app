@@ -90,4 +90,11 @@ describe('ranking', () => {
       'J and K tie at 160. J ranks higher: J is president of Express, and K is president of no company.',
     ])
   })
+
+  it('does not count company treasury cash in a player total (spec A4)', () => {
+    let g = put(testGame(), 'express', { price: 80, president: 'p1', treasury: 3 })
+    const before = playerTotal(g, 'p1')
+    g = { ...g, companies: { ...g.companies, express: { ...g.companies.express, treasuryCash: 500 } } }
+    expect(playerTotal(g, 'p1')).toBe(before)
+  })
 })

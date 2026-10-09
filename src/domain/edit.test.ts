@@ -4,6 +4,7 @@ import {
   renameGame,
   setCash,
   setHolding,
+  setLive,
   setMainView,
   setMarketShares,
   setPhase,
@@ -58,6 +59,13 @@ describe('share setters', () => {
 })
 
 describe('settings', () => {
+  it('turns live mode on and off without touching anything else', () => {
+    const g = testGame()
+    const off = setLive(g, false)
+    expect(off.settings.live).toBe(false)
+    expect({ ...off, settings: { ...off.settings, live: true } }).toEqual(g)
+  })
+
   it('sets the phase, the main view and the name', () => {
     expect(setPhase(testGame(), 'green').settings.phase).toBe('green')
     expect(setMainView(testGame(), 'scoreboard').settings.mainView).toBe('scoreboard')

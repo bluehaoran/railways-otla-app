@@ -48,6 +48,10 @@ export function setMainView(game: Game, mainView: ViewId): Game {
   return { ...game, settings: { ...game.settings, mainView } }
 }
 
+export function setLive(game: Game, live: boolean): Game {
+  return { ...game, settings: { ...game.settings, live } }
+}
+
 /** Renames the game. An empty name keeps the old one. */
 export function renameGame(game: Game, name: string): Game {
   const trimmed = name.trim()
