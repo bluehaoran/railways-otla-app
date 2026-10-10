@@ -40,6 +40,11 @@ describe('gateHints', () => {
     expect(gateHints(live('MR', 'green', false)).merge).toBe(PAIR)
   })
 
+  it('says the game is over in both hints', () => {
+    const g = withRound(live('SR', 'green', true), 7, 'SR')
+    expect(gateHints(g)).toEqual({ start: 'The game is over', merge: 'The game is over' })
+  })
+
   it('points at the Merger Round in the yellow phase', () => {
     expect(gateHints(live('MR', 'yellow', true)).merge).toBe(ROUND)
   })

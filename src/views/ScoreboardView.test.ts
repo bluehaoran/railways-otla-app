@@ -122,6 +122,28 @@ describe('ScoreboardView in a live game', () => {
     expect(w.get('[data-testid="final-banner"]').text()).toContain('Final ranking')
   })
 
+  it('says the leaders are tied when the final totals are equal', () => {
+    const over = { ...testGame(), round: { cycle: 7, type: 'SR' as const } }
+    const w = mount(ScoreboardView, { props: { game: over } })
+    const text = w.get('[data-testid="final-banner"]').text()
+    expect(text).toContain('Tied for the win')
+    expect(text).not.toContain('wins with')
+    for (const p of over.players) expect(text).toContain(p.name)
+  })
+
+  it('names the single winner', () => {
+    const over = { ...withCash(testGame(), [50, 0]), round: { cycle: 7, type: 'SR' as const } }
+    const text = mount(ScoreboardView, { props: { game: over } }).get('[data-testid="final-banner"]').text()
+    expect(text).toContain(`${over.players[0].name} wins with 50`)
+  })
+
+  it('shows no banner in a manual game past the last cycle', () => {
+    const g = testGame()
+    const manual = { ...g, settings: { ...g.settings, live: false }, round: { cycle: 7, type: 'SR' as const } }
+    const w = mount(ScoreboardView, { props: { game: manual } })
+    expect(w.find('[data-testid="final-banner"]').exists()).toBe(false)
+  })
+
   it('shows no banner during the game', () => {
     const w = mount(ScoreboardView, { props: { game: testGame() } })
     expect(w.find('[data-testid="final-banner"]').exists()).toBe(false)

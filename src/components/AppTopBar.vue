@@ -70,11 +70,13 @@ const items = [
     <span class="grow" />
 
     <div class="actions">
+      <div class="buttons">
       <Button
         label="Start company"
         icon="pi pi-plus"
         :disabled="!canStart"
         :title="startHint ?? undefined"
+        :aria-describedby="startHint ? 'topbar-hint-start' : undefined"
         data-testid="start"
         @click="emit('start')"
       />
@@ -85,9 +87,15 @@ const items = [
         outlined
         :disabled="!canMerge"
         :title="mergeHint ?? undefined"
+        :aria-describedby="mergeHint ? 'topbar-hint-merge' : undefined"
         data-testid="merge"
         @click="emit('merge')"
       />
+      </div>
+      <p v-if="startHint || mergeHint" class="gate-hint small muted" data-testid="topbar-hint">
+        <span v-if="startHint" id="topbar-hint-start">{{ startHint }}</span>
+        <span v-if="mergeHint" id="topbar-hint-merge">{{ mergeHint }}</span>
+      </p>
     </div>
 
     <button
@@ -141,7 +149,22 @@ const items = [
 }
 .actions {
   display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.buttons {
+  display: flex;
   gap: 8px;
+}
+.gate-hint {
+  margin: 0;
+  max-width: 320px;
+  text-align: right;
+  line-height: 16px;
+}
+.gate-hint span + span::before {
+  content: ' · ';
 }
 .views :deep(button) {
   min-height: 44px;

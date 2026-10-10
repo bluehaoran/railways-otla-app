@@ -173,10 +173,10 @@ Phase 2 gaps:
 - Presidency exchange prompt in the Stock Round turn (P2-22).
 - Insufficient-cash state in StockTurn and StartCompanyP2 (P2-23).
 - Close-to-0 confirmation after a sale (P2-27).
-- "End Stock Round" trigger (P2-26).
+- "End Stock Round" trigger (P2-26): built in Plan 3 without a board; reconcile with the canvas.
 - Dividend list to Issue/redeem entry point (P2-32).
 - OR company states across a whole round (P2-30).
-- End of game screen (P2-15).
+- End of game screen (P2-15): built in Plan 3 without a board; reconcile with the canvas.
 - Ledger entry correction (P2-42).
 - Edit mode for Phase 2 data (P2-60).
 - Quick add share (P2-80), after D2.

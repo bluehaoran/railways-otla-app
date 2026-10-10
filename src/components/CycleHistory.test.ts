@@ -38,6 +38,11 @@ describe('CycleHistory', () => {
     expect(view(g).get('[data-testid="cycle-history"]').text()).toContain('–')
   })
 
+  it('disables Save snapshot once the game is over', () => {
+    const w = view(withRound(testGame(), 7, 'SR'))
+    expect(w.get('[data-testid="save-snapshot"]').attributes('disabled')).toBeDefined()
+  })
+
   it('saves a snapshot for the current cycle', async () => {
     const w = view(withRound(testGame(), 2, 'OR1'))
     await w.get('[data-testid="save-snapshot"]').trigger('click')

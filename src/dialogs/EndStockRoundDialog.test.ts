@@ -29,6 +29,14 @@ describe('EndStockRoundDialog', () => {
     expect(w.text()).toContain('90')
   })
 
+  it('makes the whole row a label for its checkbox', () => {
+    const w = open(game())
+    const label = w.get('[data-testid="riser-express"]').element.closest('label')
+    expect(label).not.toBeNull()
+    expect(label!.getAttribute('for')).toBe('riser-express')
+    expect(label!.textContent).toContain('Express')
+  })
+
   it('applies the rises and moves to the first Operating Round', async () => {
     const w = open(game())
     await w.get('[data-testid="end-sr-confirm"]').trigger('click')

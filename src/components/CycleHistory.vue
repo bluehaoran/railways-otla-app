@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import Button from 'primevue/button'
 import PlayerCode from './PlayerCode.vue'
 import { cycleHistory } from '../domain/history'
-import { saveSnapshot } from '../domain/rounds'
+import { isGameOver, saveSnapshot } from '../domain/rounds'
 import type { Game } from '../domain/types'
 
 const props = defineProps<{ game: Game }>()
@@ -56,6 +56,7 @@ function change(value: number | null): string {
         icon="pi pi-camera"
         severity="secondary"
         outlined
+        :disabled="isGameOver(game)"
         data-testid="save-snapshot"
         @click="emit('update', saveSnapshot(game))"
       />
@@ -77,6 +78,8 @@ function change(value: number | null): string {
   font-weight: 600;
 }
 .row {
+  width: max-content;
+  min-width: 100%;
   display: grid;
   grid-template-columns: var(--label) repeat(var(--cols), minmax(88px, 1fr));
   min-height: 56px;
@@ -88,6 +91,11 @@ function change(value: number | null): string {
   background: var(--head);
 }
 .label {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--card);
+  border-right: 1px solid var(--line);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -105,6 +113,9 @@ function change(value: number | null): string {
   align-items: flex-end;
   justify-content: center;
   padding: 4px 12px;
+}
+.row.head .label {
+  background: var(--head);
 }
 .row.head .cell {
   flex-direction: row;

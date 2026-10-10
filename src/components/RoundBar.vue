@@ -132,6 +132,12 @@ const detail = computed(() => {
   color: var(--faint);
   background: transparent;
 }
+.chip.current.skipped {
+  border-style: solid;
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
 .phase {
   min-height: 44px;
   display: inline-flex;

@@ -4,6 +4,7 @@ import App from './App.vue'
 import { useGame } from './state/game'
 import { useSaves } from './state/saves'
 import { put, testGame } from './domain/fixtures'
+import { priceOf } from './domain/track'
 import type { Game } from './domain/types'
 
 const [J, K] = ['p1', 'p2']
@@ -246,6 +247,40 @@ describe('App in a live game', () => {
     const hint = w.get('[data-testid="gate-hint"]')
     expect(hint.text()).toContain('Companies start in the Stock Round')
     expect(w.get('footer button').attributes('aria-describedby')).toBe('gate-hint-start')
+  })
+
+  it('shows the reason in the top bar for wide screens too', () => {
+    useGame().create(at('OR1'))
+    const w = mount(App)
+    const hint = w.get('[data-testid="topbar-hint"]')
+    expect(hint.text()).toContain('Companies start in the Stock Round')
+    expect(w.get('[data-testid="start"]').attributes('aria-describedby')).toBeTruthy()
+  })
+
+  it('shows no top bar hint in a manual game', () => {
+    useGame().create(sample())
+    expect(mount(App).find('[data-testid="topbar-hint"]').exists()).toBe(false)
+  })
+
+  it('undoes the Stock Round price rises', async () => {
+    const g = { ...testGame(['Haoran', 'Ari']), round: { cycle: 1, type: 'SR' as const } }
+    useGame().create(put(g, 'express', { price: 80, president: J, holdings: { [K]: 3 } }))
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    await w.get('[data-testid="end-sr-confirm"]').trigger('click')
+    expect(priceOf(useGame().game.value!, 'express')).toBe(90)
+    expect(useGame().game.value?.round.type).toBe('OR1')
+    useGame().undo()
+    expect(priceOf(useGame().game.value!, 'express')).toBe(80)
+    expect(useGame().game.value?.round.type).toBe('SR')
+  })
+
+  it('clears the operating record when OR1 moves to OR2', async () => {
+    useGame().create({ ...at('OR1'), operating: { acted: ['express'], issuedOrRedeemed: [] } })
+    const w = mount(App)
+    await w.get('[data-testid="round-next"]').trigger('click')
+    expect(useGame().game.value?.round.type).toBe('OR2')
+    expect(useGame().game.value?.operating.acted).toEqual([])
   })
 
   it('shows no footer hint, and enables Merge, in a manual game', () => {

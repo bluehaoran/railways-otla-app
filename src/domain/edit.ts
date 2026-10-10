@@ -48,6 +48,11 @@ export function setMainView(game: Game, mainView: ViewId): Game {
   return { ...game, settings: { ...game.settings, mainView } }
 }
 
+/**
+ * Edit-mode setter. Turning `live` on for a game that already has started companies leaves `operated`
+ * false for them. Round tracking is chosen at Setup only (see docs/superpowers/plans/2026-10-10-phase-2-roadmap.md,
+ * Notes from Plan 2).
+ */
 export function setLive(game: Game, live: boolean): Game {
   return { ...game, settings: { ...game.settings, live } }
 }

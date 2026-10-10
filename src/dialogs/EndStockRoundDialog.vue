@@ -52,7 +52,8 @@ function confirm() {
           at the back of its new column.
         </p>
         <ul class="list">
-          <li v-for="r in rows" :key="r.id" class="row">
+          <li v-for="r in rows" :key="r.id" class="item">
+            <label :for="`riser-${r.id}`" class="row">
             <Checkbox
               :model-value="!skipped.has(r.id)"
               binary
@@ -64,6 +65,7 @@ function confirm() {
             <CompanyTag :company-id="r.id" />
             <span class="name">{{ r.name }}</span>
             <span class="mono prices">{{ r.from }} → {{ r.to }}</span>
+            </label>
           </li>
         </ul>
       </template>
@@ -89,16 +91,19 @@ function confirm() {
   border-radius: 12px;
   overflow: hidden;
 }
+.item {
+  border-top: 1px solid var(--line);
+}
+.item:first-child {
+  border-top: 0;
+}
 .row {
   min-height: 52px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 4px 12px;
-  border-top: 1px solid var(--line);
-}
-.row:first-child {
-  border-top: 0;
 }
 .name {
   flex: 1;

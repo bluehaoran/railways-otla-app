@@ -57,7 +57,7 @@ const modeOptions = [
   { label: 'By cycle', value: 'cycles' },
 ]
 const over = computed(() => isGameOver(props.game))
-const winner = computed(() => cards.value[0])
+const winners = computed(() => cards.value.filter((c) => c.rank === 1))
 
 const lead = (id: PlayerId) => ({ lead: leaders.value.has(id) })
 </script>
@@ -75,10 +75,16 @@ const lead = (id: PlayerId) => ({ lead: leaders.value.has(id) })
       aria-label="Scoreboard view"
       data-testid="scoreboard-mode"
     />
-    <p v-if="over" class="note final-banner" data-testid="final-banner">
+    <p v-if="over && game.settings.live" class="note final-banner" data-testid="final-banner">
       <i class="pi pi-flag" aria-hidden="true" />
       <span>
-        Final ranking. {{ winner.player.name }} wins with {{ winner.total }}.
+        <template v-if="winners.length === 1">
+          Final ranking. {{ winners[0].player.name }} wins with {{ winners[0].total }}.
+        </template>
+        <template v-else>
+          Final ranking. Tied for the win: {{ winners.map((w) => w.player.name).join(', ') }} with
+          {{ winners[0].total }}.
+        </template>
       </span>
     </p>
     <CycleHistory v-if="mode === 'cycles' && game.settings.live" :game="game" @update="(g) => emit('update', g)" />
